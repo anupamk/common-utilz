@@ -15,7 +15,7 @@ function run_unit_tests() {
 # 
 function run_benchmarks() {
     echo "*** Package Benchmarks ***"
-    pkg_list=`find . -maxdepth 1 -type d | egrep -v -e '(git|\.$)'`
+    pkg_list=`find . -maxdepth 2 -type d | egrep -v -e '(git|\.$|data|obj)'`
     for pkg in $pkg_list
     do
 	echo "- `basename $pkg`"

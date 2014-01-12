@@ -14,6 +14,8 @@ Data Structures:
   - [Graph](http://godoc.org/github.com/anupamk/common-utilz/graph)
 
 Algorithms:
+  - Graphs
+      - [Depth First Search](http://godoc.org/github.com/anupamk/common-utilz/graph/dfs)
 
 Performance
 -----------
@@ -24,5 +26,7 @@ Machine: Intel(R) Core(TM) i7 CPU 920  @ 2.67GHz
     - BenchmarkPush-8    29.8    ns/op
     - BenchmarkPop-8     6.24    ns/op
 - graph
+- dfs
+    - BenchmarkDepthFirstSearch-8        7586    ns/op
 - line_parser
 ```
