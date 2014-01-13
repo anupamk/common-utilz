@@ -26,8 +26,25 @@
 package queue
 
 import (
+	"fmt"
 	"testing"
 )
+
+func ExamplePushPop() {
+	nq := New()
+
+	nq.Push(1)
+	nq.Push(2)
+	nq.Push(3)
+
+	v1 := nq.Pop()
+	v2 := nq.Pop()
+	v3 := nq.Pop()
+
+	fmt.Printf("%d %d %d\n", v1, v2, v3)
+	// Output:
+	// 1 2 3
+}
 
 // test out basic queue operations
 func TestQueueOperations(t *testing.T) {
