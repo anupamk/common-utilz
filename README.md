@@ -12,6 +12,7 @@ Convenience Routines:
 Data Structures:
   - [Queue](http://godoc.org/github.com/anupamk/common-utilz/queue)
   - [Graph](http://godoc.org/github.com/anupamk/common-utilz/graph)
+  - [Stack](http://godoc.org/github.com/anupamk/common-utilz/stack)
 
 Algorithms:
   - Graphs
