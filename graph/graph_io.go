@@ -60,7 +60,7 @@ func LoadGraphFromReader(src *bufio.Reader) (new_graph *Graph, err error) {
 			fmt.Printf("skipping bogus connection: %d %d\n", v, w)
 			continue
 		}
-		new_graph.AddEdge(v, w)
+		new_graph.AddEdge(w, v)
 	}
 
 all_done:

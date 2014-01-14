@@ -19,7 +19,7 @@ function run_benchmarks() {
     for pkg in $pkg_list
     do
 	echo "- `basename $pkg`"
-	go test -run=NONE -bench=. $pkg | grep Benchmark | awk '{print "    -", $1, "\t", $3, "\t", $4}'
+	go test -run=NONE -bench=. -benchtime=100ms $pkg | grep Benchmark | awk '{print "    -", $1, "\t", $3, "\t", $4}'
     done
 }
 

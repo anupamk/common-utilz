@@ -79,8 +79,8 @@ func (G *Graph) Adj(v int32) []int32 {
 // well
 //
 func (G *Graph) AddEdge(v, w int32) {
-	G.adj[v].PushBack(w)
-	G.adj[w].PushBack(v)
+	G.adj[v].PushFront(w)
+	G.adj[w].PushFront(v)
 
 	G.e += 1
 

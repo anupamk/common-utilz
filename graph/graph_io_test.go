@@ -28,6 +28,7 @@ package graph
 import (
 	"bufio"
 	"fmt"
+	"sort"
 	"strings"
 	"testing"
 )
@@ -49,18 +50,18 @@ func Example_001_CreateAndDumpGraph() {
 	// Output:
 	// 13
 	// 13
-	// 0 5
-	// 0 1
-	// 0 2
 	// 0 6
-	// 3 4
+	// 0 2
+	// 0 1
+	// 0 5
 	// 3 5
-	// 4 6
+	// 3 4
 	// 4 5
+	// 4 6
 	// 7 8
-	// 9 12
-	// 9 10
 	// 9 11
+	// 9 10
+	// 9 12
 	// 11 12
 }
 
@@ -72,8 +73,8 @@ func Example_002_CreateAndDumpGraph() {
 	// Output:
 	// 3
 	// 3
-	// 0 1
 	// 0 2
+	// 0 1
 	// 1 2
 }
 
@@ -90,11 +91,77 @@ func TestLoadGraph(t *testing.T) {
 		graph_reader := bufio.NewReader(g1_reader)
 
 		g2, _ := LoadGraphFromReader(graph_reader)
-		g2_str := g2.SerializeGraph()
 
-		if g1_str != g2_str {
+		if cmp_graph(g1, g2) == false {
 			t.Log("Error: Unequal Graphs")
+			t.Logf("original-graph:\n%s", g1)
+			t.Logf("new-graph:\n%s", g2)
 			t.Fail()
 		}
 	}
+}
+
+//
+// this function returns true if the two graphs 'X' and 'Y' are
+// isomorphic. the test done here is very very naive, and is more or
+// less rather useless in any other setting but here.
+//
+func cmp_graph(X *Graph, Y *Graph) bool {
+	// basic checks, vertex + edge count must match
+	if (X.V() != Y.V()) || (X.E() != Y.E()) {
+		return false
+	}
+
+	// compare adjacency list of each vertex in each graph
+	for xv := int32(0); xv < X.V(); xv++ {
+		adjx := X.Adj(xv)
+		adjy := Y.Adj(xv)
+
+		if cmp_adj_list(&adjx, &adjy) == false {
+			return false
+		}
+	}
+
+	return true
+}
+
+//
+// i hope we don't run this abomination graphs with > 2b vertices...
+//
+func cmp_adj_list(x *[]int32, y *[]int32) bool {
+	if len(*x) != len(*y) {
+		return false
+	}
+
+	xint := make([]int, len(*x))
+	for i, xv := range *x {
+		xint[i] = int(xv)
+	}
+	sort.Ints(xint)
+
+	yint := make([]int, len(*y))
+	for i, yv := range *y {
+		yint[i] = int(yv)
+	}
+	sort.Ints(yint)
+
+	return cmp_int_slice(&xint, &yint)
+}
+
+//
+// this function returns true if two int slices are equal i.e. for
+// all i, x[i] == y[i] and 0 <= i < len(x)
+//
+func cmp_int_slice(x, y *[]int) bool {
+	if len(*x) != len(*y) {
+		return false
+	}
+
+	for i, xv := range *x {
+		if xv != (*y)[i] {
+			return false
+		}
+	}
+
+	return true
 }
