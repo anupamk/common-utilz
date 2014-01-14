@@ -17,6 +17,7 @@ Data Structures:
 Algorithms:
   - Graphs
       - [Depth First Search](http://godoc.org/github.com/anupamk/common-utilz/graph/dfs)
+      - [Breadth First Search](http://godoc.org/github.com/anupamk/common-utilz/graph/bfs)
 
 Performance
 -----------

@@ -26,6 +26,7 @@
 package dfs
 
 import (
+	"fmt"
 	"github.com/anupamk/common-utilz/graph"
 	"testing"
 )
@@ -70,6 +71,28 @@ func TestDFSSearch(t *testing.T) {
 			t.Fail()
 		}
 	}
+}
+
+func ExampleDepthFirstPath() {
+	graph_fname := "../data/graph-003.data"
+	source_vertex := int32(0)
+	g, _ := graph.LoadGraphFromFile(graph_fname)
+
+	dfs_g := New(g, source_vertex)
+	for dst_vertex := source_vertex; dst_vertex < g.V(); dst_vertex++ {
+		dst_path := dfs_g.Path(dst_vertex)
+		fmt.Printf("from %d to %d: %v\n", dfs_g.source, dst_vertex, dst_path)
+	}
+
+	// Output:
+	// from 0 to 0: [0]
+	// from 0 to 1: [0 2 1]
+	// from 0 to 2: [0 2]
+	// from 0 to 3: [0 2 3]
+	// from 0 to 4: [0 2 3 4]
+	// from 0 to 5: [0 2 3 5]
+
+	return
 }
 
 // benchmark

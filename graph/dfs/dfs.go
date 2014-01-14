@@ -30,25 +30,65 @@ package dfs
 
 import (
 	"github.com/anupamk/common-utilz/graph"
+	"github.com/anupamk/common-utilz/stack"
 )
 
 type DepthFirstSearch struct {
 	visited []bool
+	edge_to []int32
+	source  int32
 	count   int32
 }
 
-func New(G *graph.Graph, source int32) (dfs *DepthFirstSearch) {
+func New(G *graph.Graph, sv int32) (dfs *DepthFirstSearch) {
 	dfs = &DepthFirstSearch{
 		visited: make([]bool, G.V()),
+		edge_to: make([]int32, G.V()),
+		source:  sv,
 		count:   0,
 	}
 
-	dfs.run_dfs(G, source)
+	dfs.run_dfs(G, sv)
 	return
 }
 
 func (dfs *DepthFirstSearch) Visited(v int32) bool { return dfs.visited[v] }
 func (dfs *DepthFirstSearch) Count() int32         { return dfs.count }
+
+//
+// returns true if a path source -> destination exists in the
+// DepthFirstSearch object
+//
+func (dfs *DepthFirstSearch) PathExistsTo(dest int32) bool {
+	return dfs.visited[dest]
+}
+
+//
+// enumerate the source -> destination path in the DepthFirstSearch
+// object
+//
+func (dfs *DepthFirstSearch) Path(dest int32) (path []int32) {
+	if !dfs.PathExistsTo(dest) {
+		return
+	}
+
+	// walk up the stack from current vertex to the source
+	path_stack := stack.New()
+	for w := dest; w != dfs.source; w = dfs.edge_to[w] {
+		path_stack.Push(w)
+	}
+
+	path_stack.Push(dfs.source)
+
+	// populate the path
+	path = make([]int32, path_stack.Len())
+	for i := 0; !path_stack.Empty(); i++ {
+		val := path_stack.Pop()
+		path[i] = val.(int32)
+	}
+
+	return
+}
 
 //
 // returns the list of vertices that are connected to the source
@@ -77,6 +117,7 @@ func (dfs *DepthFirstSearch) run_dfs(G *graph.Graph, source int32) {
 
 	for _, w := range G.Adj(source) {
 		if dfs.visited[w] == false {
+			dfs.edge_to[w] = source
 			dfs.run_dfs(G, w)
 		}
 	}
