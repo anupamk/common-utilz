@@ -8,6 +8,7 @@ List Of Available Stuff
 -----------------------
 Convenience Routines:
   - [Line Parser](http://godoc.org/github.com/anupamk/common-utilz/line_parser)
+  - [Slice Utils](http://godoc.org/github.com/anupamk/common-utilz/slice_utils)
 
 Data Structures:
   - [Queue](http://godoc.org/github.com/anupamk/common-utilz/queue)
