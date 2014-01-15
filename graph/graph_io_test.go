@@ -28,6 +28,7 @@ package graph
 import (
 	"bufio"
 	"fmt"
+	"github.com/anupamk/common-utilz/slice_utils"
 	"sort"
 	"strings"
 	"testing"
@@ -126,7 +127,8 @@ func cmp_graph(X *Graph, Y *Graph) bool {
 }
 
 //
-// i hope we don't run this abomination graphs with > 2b vertices...
+// i hope we don't run this abomination on graphs with > 2b
+// vertices...
 //
 func cmp_adj_list(x *[]int32, y *[]int32) bool {
 	if len(*x) != len(*y) {
@@ -145,23 +147,5 @@ func cmp_adj_list(x *[]int32, y *[]int32) bool {
 	}
 	sort.Ints(yint)
 
-	return cmp_int_slice(&xint, &yint)
-}
-
-//
-// this function returns true if two int slices are equal i.e. for
-// all i, x[i] == y[i] and 0 <= i < len(x)
-//
-func cmp_int_slice(x, y *[]int) bool {
-	if len(*x) != len(*y) {
-		return false
-	}
-
-	for i, xv := range *x {
-		if xv != (*y)[i] {
-			return false
-		}
-	}
-
-	return true
+	return slice_utils.CmpIntSlice(&xint, &yint)
 }

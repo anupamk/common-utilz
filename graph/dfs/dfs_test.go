@@ -28,6 +28,7 @@ package dfs
 import (
 	"fmt"
 	"github.com/anupamk/common-utilz/graph"
+	"github.com/anupamk/common-utilz/slice_utils"
 	"testing"
 )
 
@@ -42,31 +43,13 @@ var graph_dfs_data = []struct {
 	{"../data/graph-003.data", 0, []int32{0, 1, 2, 3, 4, 5}},
 }
 
-//
-// this function returns true if two int32 slices are equal i.e. for
-// all i, x[i] == y[i] and 0 <= i < len(x)
-//
-func cmp_int32_slice(x, y *[]int32) bool {
-	if len(*x) != len(*y) {
-		return false
-	}
-
-	for i, xv := range *x {
-		if xv != (*y)[i] {
-			return false
-		}
-	}
-
-	return true
-}
-
 func TestDFSSearch(t *testing.T) {
 	for _, graph_data := range graph_dfs_data {
 		g, _ := graph.LoadGraphFromFile(graph_data.fname)
 		dfs_g := New(g, graph_data.source_vertex)
 		cv := dfs_g.ConnectedVertices()
 
-		if cmp_int32_slice(&graph_data.connected_vertices, &cv) != true {
+		if slice_utils.CmpInt32Slice(&graph_data.connected_vertices, &cv) != true {
 			t.Logf("expected: %v, got: %v\n", graph_data.connected_vertices, cv)
 			t.Fail()
 		}
