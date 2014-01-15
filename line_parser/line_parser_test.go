@@ -27,28 +27,11 @@ package line_parser
 
 import (
 	"bufio"
+	"github.com/anupamk/common-utilz/slice_utils"
 	"io"
 	"strings"
 	"testing"
 )
-
-//
-// this function returns true if two int32 slices are equal i.e. for
-// all i, x[i] == y[i] and 0 <= i < len(x)
-//
-func cmp_int32_slice(x, y *[]int32) bool {
-	if len(*x) != len(*y) {
-		return false
-	}
-
-	for i, xv := range *x {
-		if xv != (*y)[i] {
-			return false
-		}
-	}
-
-	return true
-}
 
 func TestInt32Parse(t *testing.T) {
 	var int32_tests = []struct {
@@ -64,7 +47,7 @@ func TestInt32Parse(t *testing.T) {
 
 	for _, test_val := range int32_tests {
 		result, idx := ParseStringAsInt32s(test_val.str)
-		if idx != len(result) || cmp_int32_slice(&result, &test_val.exp_result) == false {
+		if idx != len(result) || slice_utils.CmpInt32Slice(&result, &test_val.exp_result) == false {
 			t.Logf("expected: %v, got: %v\n", test_val.exp_result, result)
 			t.Fail()
 		}
@@ -109,7 +92,7 @@ hello
 			return
 		}
 
-		if cmp_int32_slice(&values, &exp_value) == false {
+		if slice_utils.CmpInt32Slice(&values, &exp_value) == false {
 			t.Logf("index: %d, expected: %v, got: %v\n", i, &expected_values[i], values)
 			t.Fail()
 		}
