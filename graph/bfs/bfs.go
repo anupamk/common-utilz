@@ -31,6 +31,7 @@ package bfs
 import (
 	"github.com/anupamk/common-utilz/graph"
 	"github.com/anupamk/common-utilz/queue"
+	"github.com/anupamk/common-utilz/stack"
 )
 
 //
@@ -39,12 +40,16 @@ import (
 //
 type BreadthFirstSearch struct {
 	visited []bool
+	edge_to []int32
+	source  int32
 	count   int32
 }
 
 func New(G *graph.Graph, source int32) (bfs *BreadthFirstSearch) {
 	bfs = &BreadthFirstSearch{
 		visited: make([]bool, G.V()),
+		edge_to: make([]int32, G.V()),
+		source:  source,
 		count:   0,
 	}
 
@@ -72,24 +77,60 @@ func (bfs *BreadthFirstSearch) ConnectedVertices() (vertex_list []int32) {
 }
 
 //
+// returns true if a path source -> destination exists in the
+// DepthFirstSearch object
+//
+func (bfs *BreadthFirstSearch) PathExistsTo(dest int32) bool {
+	return bfs.visited[dest]
+}
+
+//
+// enumerate the source -> destination path in the DepthFirstSearch
+// object
+//
+func (bfs *BreadthFirstSearch) Path(dest int32) (path []int32) {
+	if !bfs.PathExistsTo(dest) {
+		return
+	}
+
+	// walk up the stack from current vertex to the source
+	path_stack := stack.New()
+	for w := dest; w != bfs.source; w = bfs.edge_to[w] {
+		path_stack.Push(w)
+	}
+
+	path_stack.Push(bfs.source)
+
+	// populate the path
+	path = make([]int32, path_stack.Len())
+	for i := 0; !path_stack.Empty(); i++ {
+		val := path_stack.Pop()
+		path[i] = val.(int32)
+	}
+
+	return
+}
+
+//
 // private unexported stuff
 //
 
 // implements the canonical bfs procedure
 func (bfs *BreadthFirstSearch) run_bfs(G *graph.Graph, source int32) {
 	visited_queue := queue.New()
+
+	bfs.visited[source] = true
 	visited_queue.Push(source)
 
 	for !visited_queue.Empty() {
 		v := visited_queue.Pop().(int32)
+		bfs.count++
 
-		// mark current vertex as visited, and add it's
-		// adjacent vertices to the queue
-		if bfs.visited[v] == false {
-			bfs.visited[v] = true
-			bfs.count += 1
+		for _, w := range G.Adj(v) {
+			if !bfs.visited[w] {
+				bfs.edge_to[w] = v
 
-			for _, w := range G.Adj(v) {
+				bfs.visited[w] = true
 				visited_queue.Push(w)
 			}
 		}
