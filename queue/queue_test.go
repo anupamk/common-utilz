@@ -46,6 +46,18 @@ func ExamplePushPop() {
 	// 1 2 3
 }
 
+func TestQueuePushPopPush(t *testing.T) {
+	nq := New()
+
+	// queue is empty at Pop
+	nq.Push(1)
+	nq.Pop()
+
+	// can we push on an empty queue ?
+	nq.Push(2)
+	nq.Pop()
+}
+
 // test out basic queue operations
 func TestQueueOperations(t *testing.T) {
 	var i int32
