@@ -107,7 +107,6 @@ func (cs *ChunkedStack) Pop() (item Data) {
 	// shrink if required
 	if head.push_idx == 0 {
 		if cs.size == 0 {
-			cs.top = nil
 			head.next = nil
 		} else {
 			cs.top = head.next

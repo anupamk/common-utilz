@@ -49,6 +49,18 @@ func ExamplePushPop() {
 	// 4 3 2 1
 }
 
+func TestPushPopPush(t *testing.T) {
+	st := New()
+
+	// stack is empty after Pop
+	st.Push(1)
+	st.Pop()
+
+	// can we push stuff on an empty stack ?
+	st.Push(2)
+	st.Pop()
+}
+
 func TestStackOperations(t *testing.T) {
 	var i, j int32
 
