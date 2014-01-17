@@ -40,6 +40,17 @@ func TestBFSTraversal(t *testing.T) {
 	}
 }
 
+func TestBFSSubsetTraversal(t *testing.T) {
+	fname := "../data/graph-003.data"
+	source_vertex := int32(0)
+	g, _ := graph.LoadGraphFromFile(fname)
+
+	gw := BFSGraphSubsetWalker(g, source_vertex)
+	for n, err := gw(); err != EOS; n, err = gw() {
+		t.Logf("visit-node: %d\n", n)
+	}
+}
+
 func TestDFSTraversal(t *testing.T) {
 	fname := "../data/graph-003.data"
 	g, _ := graph.LoadGraphFromFile(fname)
@@ -47,6 +58,18 @@ func TestDFSTraversal(t *testing.T) {
 	gw := DFSGraphWalker(g)
 
 	for n, err := gw(); err != EOG; n, err = gw() {
+		t.Logf("visit-node: %d\n", n)
+	}
+}
+
+func TestDFSGraphSubsetWalker(t *testing.T) {
+	fname := "../data/graph-003.data"
+	source_vertex := int32(0)
+	g, _ := graph.LoadGraphFromFile(fname)
+
+	gw := DFSGraphSubsetWalker(g, source_vertex)
+
+	for n, err := gw(); err != EOS; n, err = gw() {
 		t.Logf("visit-node: %d\n", n)
 	}
 }
@@ -59,6 +82,18 @@ func BenchmarkBFSGraphTraversal(bench *testing.B) {
 
 	for i, gw := 0, BFSGraphWalker(g); i < bench.N; i++ {
 		for _, err := gw(); err != EOG; _, err = gw() {
+		}
+	}
+}
+
+// bfs-subset-benchmark
+func BenchmarkBFSGraphSubsetTraversal(bench *testing.B) {
+	fname := "../data/graph-003.data"
+	g, _ := graph.LoadGraphFromFile(fname)
+	bench.ResetTimer()
+
+	for i, gw := 0, BFSGraphSubsetWalker(g, 0); i < bench.N; i++ {
+		for _, err := gw(); err != EOS; _, err = gw() {
 		}
 	}
 }

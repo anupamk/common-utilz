@@ -33,16 +33,20 @@ import (
 	"errors"
 	"github.com/anupamk/common-utilz/graph"
 	"github.com/anupamk/common-utilz/queue"
+	"github.com/anupamk/common-utilz/stack"
 )
 
 type Walker struct {
 	graph   *graph.Graph
 	visited []bool
 }
+
 type GraphWalker func() (int32, error)
+type GraphSubsetWalker func() (int32, error)
 
 var (
 	EOG = errors.New("End Of Graph") // cheeky
+	EOS = errors.New("End Of SubSet")
 )
 
 //
@@ -103,10 +107,59 @@ func BFSGraphWalker(G *graph.Graph) GraphWalker {
 			err = EOG
 		}
 
-		return next_node, err
+		return
 	}
 
 	return bfs_walker
+}
+
+//
+// this function returns a GraphSubsetWalker function. its repeated
+// invokation visits all reachable vertices in the graph (from source
+// vertex) in breadth-first-order.
+//
+// fwiw, this is a slightly simpler version of the BFSGraphWalker
+// function above.
+//
+// an 'EOS' or end-of-graph-subset is returned, when all vertices are
+// visited...
+//
+func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
+	var bfs_ss_walker GraphSubsetWalker
+
+	walker := &Walker{
+		graph:   G,
+		visited: make([]bool, G.V()),
+	}
+	queue := queue.New()
+
+	// visit a vertex
+	visit_vertex := func(v int32) {
+		walker.visited[v] = true
+		queue.Push(v)
+		return
+	}
+	visit_vertex(source)
+
+	bfs_ss_walker = func() (next_node int32, err error) {
+		switch queue.Empty() {
+		case false:
+			// the canonical bfs procedure
+			next_node = queue.Pop().(int32)
+			for _, w := range walker.graph.Adj(next_node) {
+				if !walker.visited[w] {
+					visit_vertex(w)
+				}
+			}
+
+		case true:
+			err = EOS
+		}
+
+		return
+	}
+
+	return bfs_ss_walker
 }
 
 //
@@ -125,52 +178,33 @@ func DFSGraphWalker(G *graph.Graph) GraphWalker {
 		graph:   G,
 		visited: make([]bool, G.V()),
 	}
+	stack := stack.New()
 
 	// since we traverse all the nodes of the graph, choice of
 	// initial source vertex doesn't matter, so we pick one which
 	// is always guarenteed to be there.
 	source := int32(0)
 
-	//
-	// dfs-walker 'stack' depth is always 1.
-	//
-	// for every vertex traversed in dfs order, the walker
-	// relinquishes control to the caller. thus, nothing fancy is
-	// required here, just a little bit of bookeeping
-	var dfs_stack int32
-	var dfs_stack_empty bool
-
 	// visit a vertex
 	visit_vertex := func(v int32) {
 		walker.visited[v] = true
 		visited_nodes += 1
-		dfs_stack = v
-		dfs_stack_empty = false
+		stack.Push(v)
 		return
 	}
 	visit_vertex(source)
 
-	dfs_walker = func() (int32, error) {
-		var next_node int32
-		var err error
-
+	dfs_walker = func() (next_node int32, err error) {
 	restart_dfs_walk:
-		switch dfs_stack_empty {
+		switch stack.Empty() {
 		case false:
 			// canonical dfs procedure
-			next_node = dfs_stack
+			next_node = stack.Pop().(int32)
 			for _, w := range walker.graph.Adj(next_node) {
 				if !walker.visited[w] {
 					visit_vertex(w)
-					return next_node, err
 				}
 			}
-
-			// since we are here, it implies that all
-			// reachable vertices (from original source)
-			// have been visited. mark the stack as
-			// such...
-			dfs_stack_empty = true
 
 		case true && visited_nodes < walker.graph.V():
 			// push first unvisited node, and process it.
@@ -189,4 +223,53 @@ func DFSGraphWalker(G *graph.Graph) GraphWalker {
 	}
 
 	return dfs_walker
+}
+
+//
+// this function returns a GraphSubsetWalker function. its repeated
+// invokation visits all reachable vertices in the graph (from source
+// vertex) in depth-first-order.
+//
+// fwiw, this is a slightly simpler version of the DFSGraphWalker
+// function above.
+//
+// an 'EOS' or end-of-graph-subset is returned, when all vertices are
+// visited...
+//
+func DFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
+	var dfs_ss_walker GraphSubsetWalker
+
+	walker := &Walker{
+		graph:   G,
+		visited: make([]bool, G.V()),
+	}
+	stack := stack.New()
+
+	// visit a vertex
+	visit_vertex := func(v int32) {
+		walker.visited[v] = true
+		stack.Push(v)
+		return
+	}
+	visit_vertex(source)
+
+	dfs_ss_walker = func() (next_node int32, err error) {
+		switch stack.Empty() {
+		case false:
+			// canonical dfs procedure
+			next_node = stack.Pop().(int32)
+			for _, w := range walker.graph.Adj(next_node) {
+				if !walker.visited[w] {
+					visit_vertex(w)
+				}
+			}
+
+		case true:
+			err = EOS
+		}
+
+		return
+	}
+
+	return dfs_ss_walker
 }
