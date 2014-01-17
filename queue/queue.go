@@ -120,4 +120,4 @@ func (CQ *ChunkedQueue) Pop() (item Data) {
 }
 
 func (CQ *ChunkedQueue) Len() int32  { return CQ.size }
-func (CQ *ChunkedQueue) Empty() bool { return !(CQ.size > 0) }
+func (CQ *ChunkedQueue) Empty() bool { return CQ.size == 0 }
