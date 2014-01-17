@@ -31,52 +31,46 @@ import (
 )
 
 func TestBFSTraversal(t *testing.T) {
-	fname := "../data/graph-001.data"
-	sv := int32(0)
-	g, _ := graph.LoadGraphFromFile(fname)
-
-	gw := BFSWalker(g, sv)
-	for n, err := gw(); err != EOG; n, err = gw() {
-		t.Logf("visit-node: %d\n", n)
-	}
-}
-
-func BenchmarkBFSTraversal(bench *testing.B) {
 	fname := "../data/graph-003.data"
 	g, _ := graph.LoadGraphFromFile(fname)
-	bench.ResetTimer()
 
-	for i := 0; i < bench.N; i++ {
-		for v := int32(0); v < g.V(); v++ {
-			gw := BFSWalker(g, v)
-			for _, err := gw(); err != EOG; _, err = gw() {
-			}
-		}
+	gw := BFSGraphWalker(g)
+	for n, err := gw(); err != EOG; n, err = gw() {
+		t.Logf("visit-node: %d\n", n)
 	}
 }
 
 func TestDFSTraversal(t *testing.T) {
-	fname := "../data/graph-001.data"
-	sv := int32(0)
+	fname := "../data/graph-003.data"
 	g, _ := graph.LoadGraphFromFile(fname)
 
-	gw := DFSWalker(g, sv)
+	gw := DFSGraphWalker(g)
 
 	for n, err := gw(); err != EOG; n, err = gw() {
 		t.Logf("visit-node: %d\n", n)
 	}
 }
 
-func BenchmarkDFSTraversal(bench *testing.B) {
-	fname := "../data/graph-003.data"
+// bfs-benchmark
+func BenchmarkBFSGraphTraversal(bench *testing.B) {
+	fname := "../data/graph-004.data"
 	g, _ := graph.LoadGraphFromFile(fname)
 	bench.ResetTimer()
 
-	for i := 0; i < bench.N; i++ {
-		for v := int32(0); v < g.V(); v++ {
-			gw := DFSWalker(g, v)
-			for _, err := gw(); err != EOG; _, err = gw() {
-			}
+	for i, gw := 0, BFSGraphWalker(g); i < bench.N; i++ {
+		for _, err := gw(); err != EOG; _, err = gw() {
+		}
+	}
+}
+
+// dfs-benchmark
+func BenchmarkDFSTraversal(bench *testing.B) {
+	fname := "../data/graph-004.data"
+	g, _ := graph.LoadGraphFromFile(fname)
+	bench.ResetTimer()
+
+	for i, gw := 0, DFSGraphWalker(g); i < bench.N; i++ {
+		for _, err := gw(); err != EOG; _, err = gw() {
 		}
 	}
 }

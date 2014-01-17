@@ -46,21 +46,27 @@ var (
 )
 
 //
-// this function is called returns GraphWalker which walks a given
-// graph 'G' starting from 'source' vertex in a
+// this function returns a GraphWalker function type. repeated
+// invokation of GraphWalker walks all vertices of the graph in
 // breadth-first-order.
 //
-// each invokation of GraphWalker returns the visited-node. when all
-// nodes are visited, an 'EOG' or end-of-graph is returned.
+// an 'EOG' or end-of-graph is returned to the caller, when all
+// vertices have been visited...
 //
-func BFSWalker(G *graph.Graph, source int32) GraphWalker {
+func BFSGraphWalker(G *graph.Graph) GraphWalker {
+	var bfs_walker GraphWalker
+	var visited_nodes int32 // number of nodes visited thus far
+
 	walker := &Walker{
 		graph:   G,
 		visited: make([]bool, G.V()),
 	}
-	var bfs_walker GraphWalker
-	var visited_nodes int32
 	queue := queue.New()
+
+	// since we traverse all the nodes of the graph, choice of
+	// initial source vertex doesn't matter, so we pick one which
+	// is always guarenteed to be there.
+	source := int32(0)
 
 	// visit a vertex
 	visit_vertex := func(source int32) {
@@ -69,12 +75,9 @@ func BFSWalker(G *graph.Graph, source int32) GraphWalker {
 		queue.Push(source)
 		return
 	}
-
 	visit_vertex(source)
 
-	bfs_walker = func() (int32, error) {
-		var next_node int32
-		var err error
+	bfs_walker = func() (next_node int32, err error) {
 
 	restart_walk:
 		switch queue.Empty() {
@@ -107,26 +110,35 @@ func BFSWalker(G *graph.Graph, source int32) GraphWalker {
 }
 
 //
-// this function returns a GraphWalker, which traverses the graph 'G'
-// from source-vertex 'source' in depth-first-order.
+// this function returns a GraphWalker function type. repeated
+// invokation of GraphWalker walks all vertices of the graph in
+// depth-first-order.
 //
-// each invokation of GraphWalker returns the visited-node. when all
-// nodes are visited, an 'EOG' or end-of-graph is returned.
+// an 'EOG' or end-of-graph is returned to the caller, when all
+// vertices have been visited...
 //
-func DFSWalker(G *graph.Graph, source int32) GraphWalker {
+func DFSGraphWalker(G *graph.Graph) GraphWalker {
+	var dfs_walker GraphWalker
+	var visited_nodes int32
+
 	walker := &Walker{
 		graph:   G,
 		visited: make([]bool, G.V()),
 	}
-	var dfs_walker GraphWalker
-	var visited_nodes int32
 
-	// the dfs 'stack' depth is 1. this is because, for every
-	// vertext traversed in the dfs order, the walker relinquishes
-	// control to the caller. so, nothing fancy is required
-	// here, just a little bit of bookeeping
-	var dfs_stack_empty bool
+	// since we traverse all the nodes of the graph, choice of
+	// initial source vertex doesn't matter, so we pick one which
+	// is always guarenteed to be there.
+	source := int32(0)
+
+	//
+	// dfs-walker 'stack' depth is always 1.
+	//
+	// for every vertex traversed in dfs order, the walker
+	// relinquishes control to the caller. thus, nothing fancy is
+	// required here, just a little bit of bookeeping
 	var dfs_stack int32
+	var dfs_stack_empty bool
 
 	// visit a vertex
 	visit_vertex := func(v int32) {
