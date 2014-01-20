@@ -66,3 +66,30 @@ func CmpInt32Slice(x, y *[]int32) bool {
 
 	return true
 }
+
+//
+// this function returns true if two int32 slices contain the same
+// values but at different locations. slices are considered unequal if
+// the number of elements are not equal i.e. len(x) != len(y)
+//
+func RelaxedCmpInt32Slice(x, y *[]int32) bool {
+	if len(*x) != len(*y) {
+		return false
+	}
+
+	for _, xv := range *x {
+		found_match := false
+
+		for _, yv := range *y {
+			if xv == yv {
+				found_match = true
+			}
+		}
+
+		if !found_match {
+			return false
+		}
+	}
+
+	return true
+}
