@@ -41,99 +41,37 @@ type Walker struct {
 	visited []bool
 }
 
-type GraphWalker func() (int32, error)
-type GraphSubsetWalker func() (int32, error)
-
 var (
-	EOG = errors.New("End Of Graph") // cheeky
-	EOS = errors.New("End Of SubSet")
+	EOG  = errors.New("End Of Graph")
+	EOGS = errors.New("End Of Graph Subset")
 )
 
-//
-// this function returns a GraphWalker function type. repeated
-// invokation of GraphWalker walks all vertices of the graph in
-// breadth-first-order.
-//
-// an 'EOG' or end-of-graph is returned to the caller, when all
-// vertices have been visited...
-//
-func BFSGraphWalker(G *graph.Graph) GraphWalker {
-	var bfs_walker GraphWalker
-	var visited_nodes int32 // number of nodes visited thus far
+type walker_style_t int
 
-	walker := &Walker{
-		graph:   G,
-		visited: make([]bool, G.V()),
-	}
-	queue := queue.New()
+const (
+	DO_DFS walker_style_t = iota
+	DO_BFS                = iota
+)
 
-	// since we traverse all the nodes of the graph, choice of
-	// initial source vertex doesn't matter, so we pick one which
-	// is always guarenteed to be there.
-	source := int32(0)
-
-	// visit a vertex
-	visit_vertex := func(source int32) {
-		walker.visited[source] = true
-		visited_nodes += 1
-		queue.Push(source)
-		return
-	}
-	visit_vertex(source)
-
-	bfs_walker = func() (next_node int32, err error) {
-
-	restart_walk:
-		switch queue.Empty() {
-		case false:
-			// the canonical bfs procedure
-			next_node = queue.Pop().(int32)
-			for _, w := range walker.graph.Adj(next_node) {
-				if !walker.visited[w] {
-					visit_vertex(w)
-				}
-			}
-
-		case true && visited_nodes < walker.graph.V():
-			// enqueue first node that is not processed yet...
-			for v := int32(0); v < walker.graph.V(); v++ {
-				if !walker.visited[v] {
-					visit_vertex(v)
-					goto restart_walk
-				}
-			}
-
-		case true && visited_nodes == walker.graph.V():
-			err = EOG
-		}
-
-		return
-	}
-
-	return bfs_walker
-}
+type GraphWalker func() (int32, error)
+type GraphSubsetWalker func() (int32, error)
 
 //
 // this function returns a GraphSubsetWalker function. its repeated
 // invokation visits all reachable vertices in the graph (from source
 // vertex) in breadth-first-order.
 //
-// fwiw, this is a slightly simpler version of the BFSGraphWalker
-// function above.
-//
-// an 'EOS' or end-of-graph-subset is returned, when all vertices are
+// an 'EOGS' or end-of-graph-subset is returned, when all vertices are
 // visited...
 //
 func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
-	var bfs_ss_walker GraphSubsetWalker
-
+	var ss_walker GraphSubsetWalker
+	queue := queue.New()
 	walker := &Walker{
 		graph:   G,
 		visited: make([]bool, G.V()),
 	}
-	queue := queue.New()
 
-	// visit a vertex
 	visit_vertex := func(v int32) {
 		walker.visited[v] = true
 		queue.Push(v)
@@ -141,88 +79,22 @@ func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 	}
 	visit_vertex(source)
 
-	bfs_ss_walker = func() (next_node int32, err error) {
+	ss_walker = func() (next int32, err error) {
 		switch queue.Empty() {
 		case false:
-			// the canonical bfs procedure
-			next_node = queue.Pop().(int32)
-			for _, w := range walker.graph.Adj(next_node) {
+			// canonical bfs procedure
+			next = queue.Pop().(int32)
+			for _, w := range walker.graph.Adj(next) {
 				if !walker.visited[w] {
 					visit_vertex(w)
 				}
 			}
-
 		case true:
-			err = EOS
+			err = EOGS
 		}
-
 		return
 	}
-
-	return bfs_ss_walker
-}
-
-//
-// this function returns a GraphWalker function type. repeated
-// invokation of GraphWalker walks all vertices of the graph in
-// depth-first-order.
-//
-// an 'EOG' or end-of-graph is returned to the caller, when all
-// vertices have been visited...
-//
-func DFSGraphWalker(G *graph.Graph) GraphWalker {
-	var dfs_walker GraphWalker
-	var visited_nodes int32
-
-	walker := &Walker{
-		graph:   G,
-		visited: make([]bool, G.V()),
-	}
-	stack := stack.New()
-
-	// since we traverse all the nodes of the graph, choice of
-	// initial source vertex doesn't matter, so we pick one which
-	// is always guarenteed to be there.
-	source := int32(0)
-
-	// visit a vertex
-	visit_vertex := func(v int32) {
-		walker.visited[v] = true
-		visited_nodes += 1
-		stack.Push(v)
-		return
-	}
-	visit_vertex(source)
-
-	dfs_walker = func() (next_node int32, err error) {
-	restart_dfs_walk:
-		switch stack.Empty() {
-		case false:
-			// canonical dfs procedure
-			next_node = stack.Pop().(int32)
-			for _, w := range walker.graph.Adj(next_node) {
-				if !walker.visited[w] {
-					visit_vertex(w)
-				}
-			}
-
-		case true && visited_nodes < walker.graph.V():
-			// push first unvisited node, and process it.
-			for v := int32(0); v < walker.graph.V(); v++ {
-				if !walker.visited[v] {
-					visit_vertex(v)
-					goto restart_dfs_walk
-				}
-			}
-
-		case true && visited_nodes == walker.graph.V():
-			err = EOG
-		}
-
-		return next_node, err
-	}
-
-	return dfs_walker
+	return ss_walker
 }
 
 //
@@ -230,46 +102,124 @@ func DFSGraphWalker(G *graph.Graph) GraphWalker {
 // invokation visits all reachable vertices in the graph (from source
 // vertex) in depth-first-order.
 //
-// fwiw, this is a slightly simpler version of the DFSGraphWalker
-// function above.
-//
-// an 'EOS' or end-of-graph-subset is returned, when all vertices are
+// an 'EOGS' or end-of-graph-subset is returned, when all vertices are
 // visited...
 //
 func DFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
-	var dfs_ss_walker GraphSubsetWalker
+	var ss_walker GraphSubsetWalker
 
 	walker := &Walker{
 		graph:   G,
 		visited: make([]bool, G.V()),
 	}
-	stack := stack.New()
 
-	// visit a vertex
-	visit_vertex := func(v int32) {
-		walker.visited[v] = true
-		stack.Push(v)
-		return
-	}
-	visit_vertex(source)
+	// add source
+	stack_1 := stack.New()
+	stack_2 := stack.New()
+	stack_1.Push(source)
 
-	dfs_ss_walker = func() (next_node int32, err error) {
-		switch stack.Empty() {
-		case false:
-			// canonical dfs procedure
-			next_node = stack.Pop().(int32)
-			for _, w := range walker.graph.Adj(next_node) {
-				if !walker.visited[w] {
-					visit_vertex(w)
-				}
+	// complete the discovery
+	for !stack_1.Empty() {
+		v := stack_1.Pop().(int32)
+		if !walker.visited[v] {
+			walker.visited[v] = true
+			stack_2.Push(v)
+
+			for _, w := range walker.graph.Adj(v) {
+				stack_1.Push(w)
 			}
+		}
+	}
+
+	// do the rest
+	ss_walker = func() (next int32, err error) {
+		switch stack_2.Empty() {
+		case false:
+			next = stack_2.Pop().(int32)
 
 		case true:
-			err = EOS
+			err = EOGS
 		}
 
 		return
 	}
 
-	return dfs_ss_walker
+	return ss_walker
+}
+
+//
+// this function returns a GraphWalker function type. repeated
+// invokation of which traverses all vertices of the graph in
+// breadth-first-order.
+//
+// an 'EOG' or end-of-graph is returned to the caller, when all
+// vertices have been visited...
+//
+func BFSGraphWalker(G *graph.Graph) GraphWalker {
+	return create_fullgraph_walker(G, DO_BFS)
+}
+
+//
+// this function returns a GraphWalker function type. repeated
+// invokation of which traverses all vertices of the graph in
+// depth-first-order.
+//
+// an 'EOG' or end-of-graph is returned to the caller, when all
+// vertices have been visited...
+//
+func DFSGraphWalker(G *graph.Graph) GraphWalker {
+	return create_fullgraph_walker(G, DO_DFS)
+}
+
+// private un-exported stuff
+
+//
+// this function creates a graph-walker depending on the 'style' of
+// walk (either bfs or dfs) to be done on the graph.
+//
+// just walk all the subsets of the graph using the appropriate subset
+// walker.
+//
+func create_fullgraph_walker(G *graph.Graph, howto_walk walker_style_t) GraphWalker {
+	var the_walker GraphWalker
+	var num_visited_nodes int32
+	var the_ss_walker GraphSubsetWalker
+
+	visited_nodes := make([]bool, G.V())
+	source := int32(0)
+
+	switch howto_walk {
+	case DO_BFS:
+		the_ss_walker = BFSGraphSubsetWalker(G, source)
+
+	case DO_DFS:
+		the_ss_walker = DFSGraphSubsetWalker(G, source)
+	}
+
+	the_walker = func() (next int32, err error) {
+		next, err = the_ss_walker()
+		visited_nodes[next] = true
+		num_visited_nodes += 1
+
+		switch {
+		case err == EOGS && num_visited_nodes < G.V():
+			// find first available un-visited node.
+			for v := int32(0); v < G.V(); v++ {
+				if !visited_nodes[v] {
+					the_ss_walker = BFSGraphSubsetWalker(G, v)
+
+					// quench it...
+					_, _ = the_ss_walker()
+					break
+				}
+			}
+
+		case err == EOGS && num_visited_nodes >= G.V():
+			// we are done here
+			err = EOG
+		}
+		return
+	}
+
+	return the_walker
 }

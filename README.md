@@ -38,7 +38,7 @@ Machine: Intel(R) Core(TM) i7 CPU 920  @ 2.67GHz
 - bfs
     - BenchmarkBreadthFirstSearch-8      298089          ns/op
 - traversal
-    - BenchmarkBFSTraversal-8    285810          ns/op
-    - BenchmarkDFSTraversal-8    11488   ns/op
+    - BenchmarkBFSGraphTraversal-8       71.7    ns/op
+    - BenchmarkDFSGraphTraversal-8       70.2    ns/op
 - line_parser
 ```
