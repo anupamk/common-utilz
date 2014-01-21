@@ -40,8 +40,8 @@ func ExampleCheckBFSTraversalOrder() {
 
 	bfs_walker := BFSGraphSubsetWalker(g, source_vertex)
 
-	for v, err := bfs_walker(); err != EOGS; v, err = bfs_walker() {
-		fmt.Println(v)
+	for E, err := bfs_walker(); err != EOGS; E, err = bfs_walker() {
+		fmt.Println(E.dst)
 	}
 
 	// Output:
@@ -60,8 +60,8 @@ func ExampleCheckDFSSubsetTraversalOrder() {
 	source_vertex := int32(0)
 
 	dfs_walker := DFSGraphSubsetWalker(g, source_vertex)
-	for v, err := dfs_walker(); err != EOGS; v, err = dfs_walker() {
-		fmt.Println(v)
+	for E, err := dfs_walker(); err != EOGS; E, err = dfs_walker() {
+		fmt.Println(E.dst)
 	}
 
 	// Output:
@@ -85,8 +85,8 @@ func TestCheckGraphSubsetTraversal(t *testing.T) {
 		i, vv := 0, make([]int32, g.V())
 
 		// visit vertices
-		for v, err := walker(); err != EOGS; v, err = walker() {
-			vv[i] = v
+		for E, err := walker(); err != EOGS; E, err = walker() {
+			vv[i] = E.src
 			i += 1
 		}
 
@@ -122,8 +122,8 @@ func TestCheckGraphTraversal(t *testing.T) {
 		i, vv := 0, make([]int32, g.V())
 
 		// visit vertices
-		for v, err := walker(); err != EOG; v, err = walker() {
-			vv[i] = v
+		for E, err := walker(); err != EOG; E, err = walker() {
+			vv[i] = E.src
 			i += 1
 		}
 
