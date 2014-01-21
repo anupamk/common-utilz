@@ -31,6 +31,7 @@ package traversal
 
 import (
 	"errors"
+	"fmt"
 	"github.com/anupamk/common-utilz/graph"
 	"github.com/anupamk/common-utilz/queue"
 	"github.com/anupamk/common-utilz/stack"
@@ -39,6 +40,18 @@ import (
 type Walker struct {
 	graph   *graph.Graph
 	visited []bool
+}
+
+type Edge struct {
+	src int32
+	dst int32
+}
+
+// stringified representation of an edge v-w
+func (edge Edge) String() string {
+	str := ""
+	str += fmt.Sprintf("%d-%d", edge.src, edge.dst)
+	return str
 }
 
 var (
@@ -53,8 +66,8 @@ const (
 	DO_BFS                = iota
 )
 
-type GraphWalker func() (int32, error)
-type GraphSubsetWalker func() (int32, error)
+type GraphWalker func() (Edge, error)
+type GraphSubsetWalker func() (Edge, error)
 
 //
 // this function returns a GraphSubsetWalker function. its repeated
@@ -72,21 +85,23 @@ func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 		visited: make([]bool, G.V()),
 	}
 
-	visit_vertex := func(v int32) {
-		walker.visited[v] = true
-		queue.Push(v)
+	visit_vertex := func(edge Edge) {
+		walker.visited[edge.dst] = true
+		queue.Push(edge)
 		return
 	}
-	visit_vertex(source)
+	visit_vertex(Edge{source, source})
 
-	ss_walker = func() (next int32, err error) {
+	ss_walker = func() (edge Edge, err error) {
 		switch queue.Empty() {
 		case false:
 			// canonical bfs procedure
-			next = queue.Pop().(int32)
-			for _, w := range walker.graph.Adj(next) {
+			edge = queue.Pop().(Edge)
+			// fmt.Printf("popped-edge: %s\n", edge)
+
+			for _, w := range walker.graph.Adj(edge.dst) {
 				if !walker.visited[w] {
-					visit_vertex(w)
+					visit_vertex(Edge{edge.dst, w})
 				}
 			}
 		case true:
@@ -116,26 +131,28 @@ func DFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 	// add source
 	stack_1 := stack.New()
 	stack_2 := stack.New()
-	stack_1.Push(source)
+	stack_1.Push(Edge{source, source})
 
 	// complete the discovery
 	for !stack_1.Empty() {
-		v := stack_1.Pop().(int32)
-		if !walker.visited[v] {
-			walker.visited[v] = true
-			stack_2.Push(v)
+		edge := stack_1.Pop().(Edge)
 
-			for _, w := range walker.graph.Adj(v) {
-				stack_1.Push(w)
+		if !walker.visited[edge.dst] {
+			walker.visited[edge.dst] = true
+			stack_2.Push(edge)
+
+			for _, w := range walker.graph.Adj(edge.dst) {
+				e1 := Edge{edge.dst, w}
+				stack_1.Push(e1)
 			}
 		}
 	}
 
 	// do the rest
-	ss_walker = func() (next int32, err error) {
+	ss_walker = func() (next Edge, err error) {
 		switch stack_2.Empty() {
 		case false:
-			next = stack_2.Pop().(int32)
+			next = stack_2.Pop().(Edge)
 
 		case true:
 			err = EOGS
@@ -196,9 +213,9 @@ func create_fullgraph_walker(G *graph.Graph, howto_walk walker_style_t) GraphWal
 		the_ss_walker = DFSGraphSubsetWalker(G, source)
 	}
 
-	the_walker = func() (next int32, err error) {
+	the_walker = func() (next Edge, err error) {
 		next, err = the_ss_walker()
-		visited_nodes[next] = true
+		visited_nodes[next.dst] = true
 		num_visited_nodes += 1
 
 		switch {
