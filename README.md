@@ -20,6 +20,7 @@ Algorithms:
       - [Depth First Search](http://godoc.org/github.com/anupamk/common-utilz/graph/dfs)
       - [Breadth First Search](http://godoc.org/github.com/anupamk/common-utilz/graph/bfs)
       - [Traversal](http://godoc.org/github.com/anupamk/common-utilz/graph/traversal)
+      - [Misc](http://godoc.org/github.com/anupamk/common-utilz/graph/algorithms)
 
 Performance
 -----------
@@ -36,9 +37,13 @@ Machine: Intel(R) Core(TM) i7 CPU 920  @ 2.67GHz
 - dfs
     - BenchmarkDepthFirstSearch-8        7586    ns/op
 - bfs
-    - BenchmarkBreadthFirstSearch-8      298089          ns/op
+    - BenchmarkBreadthFirstSearch-8      298089  ns/op
 - traversal
     - BenchmarkBFSGraphTraversal-8       71.7    ns/op
     - BenchmarkDFSGraphTraversal-8       70.2    ns/op
+- algorithms
+    - BenchmarkConnectedComponents-8     1.08    ns/op
+    - BenchmarkBFSPathTo-8       	 297409  ns/op
+    - BenchmarkDFSPathTo-8       	 296948  ns/op
 - line_parser
 ```
