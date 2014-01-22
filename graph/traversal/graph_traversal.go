@@ -43,14 +43,14 @@ type Walker struct {
 }
 
 type Edge struct {
-	src int32
-	dst int32
+	Src int32
+	Dst int32
 }
 
 // stringified representation of an edge v-w
 func (edge Edge) String() string {
 	str := ""
-	str += fmt.Sprintf("%d-%d", edge.src, edge.dst)
+	str += fmt.Sprintf("%d-%d", edge.Src, edge.Dst)
 	return str
 }
 
@@ -86,7 +86,7 @@ func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 	}
 
 	visit_vertex := func(edge Edge) {
-		walker.visited[edge.dst] = true
+		walker.visited[edge.Dst] = true
 		queue.Push(edge)
 		return
 	}
@@ -99,9 +99,9 @@ func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 			edge = queue.Pop().(Edge)
 			// fmt.Printf("popped-edge: %s\n", edge)
 
-			for _, w := range walker.graph.Adj(edge.dst) {
+			for _, w := range walker.graph.Adj(edge.Dst) {
 				if !walker.visited[w] {
-					visit_vertex(Edge{edge.dst, w})
+					visit_vertex(Edge{edge.Dst, w})
 				}
 			}
 		case true:
@@ -137,12 +137,12 @@ func DFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 	for !stack_1.Empty() {
 		edge := stack_1.Pop().(Edge)
 
-		if !walker.visited[edge.dst] {
-			walker.visited[edge.dst] = true
+		if !walker.visited[edge.Dst] {
+			walker.visited[edge.Dst] = true
 			stack_2.Push(edge)
 
-			for _, w := range walker.graph.Adj(edge.dst) {
-				e1 := Edge{edge.dst, w}
+			for _, w := range walker.graph.Adj(edge.Dst) {
+				e1 := Edge{edge.Dst, w}
 				stack_1.Push(e1)
 			}
 		}
@@ -213,7 +213,7 @@ func create_fullgraph_walker(G *graph.Graph, howto_walk walker_style_t) GraphWal
 
 	the_walker = func() (next Edge, err error) {
 		next, err = the_ss_walker()
-		visited_nodes[next.dst] = true
+		visited_nodes[next.Dst] = true
 		num_visited_nodes += 1
 
 		switch {
