@@ -31,6 +31,8 @@
 //
 package slice_utils
 
+import "sort"
+
 //
 // this function returns true if two int slices are equal i.e. for
 // all i, x[i] == y[i] and 0 <= i < len(x)
@@ -77,21 +79,14 @@ func RelaxedCmpInt32Slice(x, y *[]int32) bool {
 		return false
 	}
 
-	for _, xv := range *x {
-		found_match := false
+	// copy and compare.
+	x_cp := append([]int32(nil), (*x)...)
+	SortInt32Slice(&x_cp)
 
-		for _, yv := range *y {
-			if xv == yv {
-				found_match = true
-			}
-		}
+	y_cp := append([]int32(nil), (*y)...)
+	SortInt32Slice(&y_cp)
 
-		if !found_match {
-			return false
-		}
-	}
-
-	return true
+	return CmpInt32Slice(&x_cp, &y_cp)
 }
 
 //
@@ -110,4 +105,24 @@ func CmpStringSlice(x, y *[]string) bool {
 	}
 
 	return true
+}
+
+//
+// this function returns true if two string slices contain the same
+// values but at different locations. slices are considered unequal if
+// the number of elements are not equal i.e. len(x) != len(y)
+//
+func RelaxedCmpStringSlice(x, y *[]string) bool {
+	if len(*x) != len(*y) {
+		return false
+	}
+
+	// copy and compare.
+	x_cp := append([]string(nil), (*x)...)
+	sort.Strings(x_cp)
+
+	y_cp := append([]string(nil), (*y)...)
+	sort.Strings(y_cp)
+
+	return CmpStringSlice(&x_cp, &y_cp)
 }
