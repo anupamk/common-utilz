@@ -93,3 +93,21 @@ func RelaxedCmpInt32Slice(x, y *[]int32) bool {
 
 	return true
 }
+
+//
+// this function returns true if two string slices are equal i.e. for
+// all i, x[i] == y[i] and 0 <= i < len(x)
+//
+func CmpStringSlice(x, y *[]string) bool {
+	if len(*x) != len(*y) {
+		return false
+	}
+
+	for i, xv := range *x {
+		if xv != (*y)[i] {
+			return false
+		}
+	}
+
+	return true
+}

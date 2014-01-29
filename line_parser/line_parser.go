@@ -94,3 +94,38 @@ func Int32sFromReader(r *bufio.Reader, comment_char byte) (retval []int32, err e
 
 	return
 }
+
+//
+// split a non-empty and non-commented line from a reader into a
+// slice of strings, each delimited by a 'seperator'. the returned
+// slice doesn't contain any zero-length strings...
+//
+func StringsFromReader(r *bufio.Reader, comment_char byte, seperator string) (retval []string, err error) {
+	var next_line string
+	var j int
+
+	// get the next non-commented line, and split it, then
+	next_line, err = GetNextLineFromReader(r, comment_char)
+	if err != nil {
+		return
+	}
+
+	split_result := strings.Split(next_line, seperator)
+	tmp_result := make([]string, len(split_result))
+
+	// ignore all zero-length strings and
+	for _, str := range split_result {
+		if len(str) == 0 {
+			continue
+		}
+
+		tmp_result[j] = strings.TrimSpace(str)
+		j = j + 1
+	}
+
+	// compact the result
+	retval = make([]string, j)
+	copy(retval, tmp_result[:j])
+
+	return
+}

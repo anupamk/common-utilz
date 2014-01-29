@@ -20,6 +20,7 @@ Algorithms:
       - [Depth First Search](http://godoc.org/github.com/anupamk/common-utilz/graph/dfs)
       - [Breadth First Search](http://godoc.org/github.com/anupamk/common-utilz/graph/bfs)
       - [Traversal](http://godoc.org/github.com/anupamk/common-utilz/graph/traversal)
+      - [Symbol Graph](http://godoc.org/github.com/anupamk/common-utilz/graph/symbol_graph)
       - [Misc](http://godoc.org/github.com/anupamk/common-utilz/graph/algorithms)
 
 Performance

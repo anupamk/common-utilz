@@ -98,3 +98,31 @@ hello
 		}
 	}
 }
+
+func TestStringParse(t *testing.T) {
+	var test_string = `
+abcd edf/          jdfkdsjf/ koiklk
+# 12314 231
+			hello/ world
+abcdefg/ kjiuhy  / skjdf
+			
+
+`
+	var expected_values = [...][]string{
+		[]string{"abcd edf", "jdfkdsjf", "koiklk"},
+		[]string{"hello", "world"},
+		[]string{"abcdefg", "kjiuhy", "skjdf"},
+	}
+
+	// create a reader from a string
+	str_reader := strings.NewReader(test_string)
+	str_bufio_reader := bufio.NewReader(str_reader)
+
+	for i, exp_value := range expected_values {
+		result, _ := StringsFromReader(str_bufio_reader, '#', "/")
+		if slice_utils.CmpStringSlice(&result, &exp_value) == false {
+			t.Logf("index: %d, expected: '%v', got: '%v'\n", i, exp_value, result)
+			t.Fail()
+		}
+	}
+}

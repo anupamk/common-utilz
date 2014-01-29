@@ -96,3 +96,26 @@ func TestRelaxedCmpInt32Slice(t *testing.T) {
 	}
 
 }
+
+func TestCmpStringSlice(t *testing.T) {
+	var int32_slice_test = []struct {
+		x    []string
+		y    []string
+		want bool
+	}{
+		{[]string{"abcd", "efg", "hijkl"}, []string{"abcd", "efg", "hijkl"}, true},
+		{[]string{"abcd", "efg", "hijkl", "alpha"}, []string{"abcd", "efg", "hijkl"}, false},
+		{[]string{"abcd", "efg", "hijkl"}, []string{"efg", "hijkl", "abcd"}, false},
+		{[]string{}, []string{}, true},
+	}
+
+	for _, test_val := range int32_slice_test {
+		got := CmpStringSlice(&test_val.x, &test_val.y)
+		if got != test_val.want {
+			t.Logf("Failed: wanted: %v, got: %v, slice-x: %v, slice-y: %v\n",
+				test_val.want, got, test_val.x, test_val.y)
+			t.Fail()
+		}
+	}
+
+}
