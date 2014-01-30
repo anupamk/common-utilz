@@ -64,7 +64,7 @@ func (sg *SymbolGraph) String() (retval string) {
 // this function is called to create a symbol-graph from it's
 // serialized definition.
 //
-func LoadSymbolGraphFromReader(src *bufio.Reader, sep string) (sg *SymbolGraph, sg_err error) {
+func LoadFromReader(src *bufio.Reader, sep string) (sg *SymbolGraph, sg_err error) {
 	var edge_list []string_slice_t
 
 	sg = &SymbolGraph{
@@ -112,7 +112,7 @@ func LoadSymbolGraphFromReader(src *bufio.Reader, sep string) (sg *SymbolGraph, 
 // to create a symbol-graph from its serialized definition stored in a
 // file identified by 'fname'
 //
-func LoadSymbolGraphFromFile(fname string, sep string) (sg *SymbolGraph, err error) {
+func LoadFromFile(fname string, sep string) (sg *SymbolGraph, err error) {
 	var f *os.File
 
 	if f, err = os.Open(fname); err != nil {
@@ -121,7 +121,7 @@ func LoadSymbolGraphFromFile(fname string, sep string) (sg *SymbolGraph, err err
 	defer f.Close()
 
 	file_reader := bufio.NewReader(f)
-	if sg, err = LoadSymbolGraphFromReader(file_reader, sep); err != nil {
+	if sg, err = LoadFromReader(file_reader, sep); err != nil {
 		return
 	}
 
