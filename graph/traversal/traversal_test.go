@@ -86,7 +86,7 @@ func TestCheckGraphSubsetTraversal(t *testing.T) {
 
 		// visit vertices
 		for E, err := walker(); err != EOGS; E, err = walker() {
-			vv[i] = E.Src
+			vv[i] = E.Dst
 			i += 1
 		}
 
@@ -123,7 +123,7 @@ func TestCheckGraphTraversal(t *testing.T) {
 
 		// visit vertices
 		for E, err := walker(); err != EOG; E, err = walker() {
-			vv[i] = E.Src
+			vv[i] = E.Dst
 			i += 1
 		}
 
@@ -138,12 +138,11 @@ func TestCheckGraphTraversal(t *testing.T) {
 	}
 
 	// test dfs
-	dfs_vv := visited_nodes(BFSGraphWalker(g))
+	dfs_vv := visited_nodes(DFSGraphWalker(g))
 	if !slice_utils.RelaxedCmpInt32Slice(dfs_vv, actual_vv) {
 		t.Logf("failed\nactual-visited-vertices: %v\nexpected-visited-vertices: %v\n", dfs_vv, actual_vv)
 		t.Fail()
 	}
-
 }
 
 // benchmark various traversals

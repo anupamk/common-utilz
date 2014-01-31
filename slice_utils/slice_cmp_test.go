@@ -109,7 +109,7 @@ func TestCmpStringSlice(t *testing.T) {
 		{[]string{}, []string{}, true},
 	}
 
-	for _, test_val := range int32_slice_test {
+	for _, test_val := range string_slice_test {
 		got := CmpStringSlice(&test_val.x, &test_val.y)
 		if got != test_val.want {
 			t.Logf("Failed: wanted: %v, got: %v, slice-x: %v, slice-y: %v\n",
@@ -132,7 +132,7 @@ func TestRelaxedCmpStringSlice(t *testing.T) {
 		{[]string{}, []string{}, true},
 	}
 
-	for i, test_val := range int32_slice_test {
+	for i, test_val := range string_slice_test {
 		got := RelaxedCmpStringSlice(&test_val.x, &test_val.y)
 		if got != test_val.want {
 			t.Logf("Failed-%d: wanted: %v, got: %v, slice-x: %v, slice-y: %v\n",

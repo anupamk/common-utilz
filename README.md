@@ -25,26 +25,29 @@ Algorithms:
 
 Performance
 -----------
-Machine: Intel(R) Core(TM) i7 CPU 920  @ 2.67GHz
+Machine: Intel(R) Core(TM) i7 CPU       Q 720  @ 1.60GHz
 
 ```
-- queue
-    - BenchmarkPush-8    29.8    ns/op
-    - BenchmarkPop-8     6.24    ns/op
-- stack
-    - BenchmarkPush-8    26.3    ns/op
-    - BenchmarkPop-8     6.41    ns/op
-- graph
-- dfs
-    - BenchmarkDepthFirstSearch-8        7586    ns/op
-- bfs
-    - BenchmarkBreadthFirstSearch-8      298089  ns/op
-- traversal
-    - BenchmarkBFSGraphTraversal-8       71.7    ns/op
-    - BenchmarkDFSGraphTraversal-8       70.2    ns/op
-- algorithms
-    - BenchmarkConnectedComponents-8     1.08    ns/op
-    - BenchmarkBFSPathTo-8       	 297409  ns/op
-    - BenchmarkDFSPathTo-8       	 296948  ns/op
 - line_parser
+- graph
+- symbol_graph
+- bfs
+    - BenchmarkBreadthFirstSearch-8      414799  ns/op
+- applications
+- dfs
+    - BenchmarkDepthFirstSearch-8        10655   ns/op
+- traversal
+    - BenchmarkBFSGraphTraversal-8       677     ns/op
+    - BenchmarkDFSGraphTraversal-8       647     ns/op
+- algorithms
+    - BenchmarkConnectedComponents-8     0.76    ns/op
+    - BenchmarkBFSPathTo-8       	 394695  ns/op
+    - BenchmarkDFSPathTo-8       	 390624  ns/op
+- queue
+    - BenchmarkPush-8    		 54.5    ns/op
+    - BenchmarkPop-8     		 7.27    ns/op
+- stack
+    - BenchmarkPush-8    		 52.5    ns/op
+    - BenchmarkPop-8     		 7.42    ns/op
+- slice_utils
 ```

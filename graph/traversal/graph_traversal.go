@@ -97,7 +97,6 @@ func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 		case false:
 			// canonical bfs procedure
 			edge = queue.Pop().(Edge)
-			// fmt.Printf("popped-edge: %s\n", edge)
 
 			for _, w := range walker.graph.Adj(edge.Dst) {
 				if !walker.visited[w] {
@@ -192,45 +191,67 @@ func DFSGraphWalker(G *graph.Graph) GraphWalker {
 // this function creates a graph-walker depending on the 'style' of
 // walk (either bfs or dfs) to be done on the graph.
 //
-// just walk all the subsets of the graph using the appropriate subset
-// walker.
+// basically we just walk all the subsets of the graph using the
+// appropriate subset walker.
 //
 func create_fullgraph_walker(G *graph.Graph, howto_walk walker_style_t) GraphWalker {
 	var the_walker GraphWalker
-	var num_visited_nodes int32
-	var the_ss_walker GraphSubsetWalker
+	var ss_walker GraphSubsetWalker
 
 	visited_nodes := make([]bool, G.V())
-	source := int32(0)
 
-	switch howto_walk {
-	case DO_BFS:
-		the_ss_walker = BFSGraphSubsetWalker(G, source)
+	// get a new walker using the first non-visited vertex as
+	// source...
+	get_new_walker := func() (sswalker GraphSubsetWalker) {
+		var source int32
 
-	case DO_DFS:
-		the_ss_walker = DFSGraphSubsetWalker(G, source)
+		// first non-visited-vertex
+		for v, seen := range visited_nodes {
+			if seen {
+				continue
+			}
+			source = int32(v)
+			break
+		}
+
+		// select walker
+		switch howto_walk {
+		case DO_BFS:
+			sswalker = BFSGraphSubsetWalker(G, source)
+		case DO_DFS:
+			sswalker = DFSGraphSubsetWalker(G, source)
+		}
+
+		return
 	}
 
+	// seen all that can be seen ?
+	all_done := func() bool {
+		for _, seen := range visited_nodes {
+			if !seen {
+				return false
+			}
+		}
+
+		return true
+	}
+
+	ss_walker = get_new_walker()
+
+	// the graph-walker
 	the_walker = func() (next Edge, err error) {
-		next, err = the_ss_walker()
+	walk_new_subset:
+		next, err = ss_walker()
 		visited_nodes[next.Dst] = true
-		num_visited_nodes += 1
 
 		switch {
-		case err == EOGS && num_visited_nodes < G.V():
-			// find first available un-visited node.
-			for v := int32(0); v < G.V(); v++ {
-				if !visited_nodes[v] {
-					the_ss_walker = BFSGraphSubsetWalker(G, v)
+		case err == EOGS && !all_done():
+			// ok so, we have exhausted this subset, but
+			// many more still to go. start a new walker.
+			ss_walker = get_new_walker()
+			goto walk_new_subset
 
-					// quench it...
-					_, _ = the_ss_walker()
-					break
-				}
-			}
-
-		case err == EOGS && num_visited_nodes >= G.V():
-			// we are done here
+		case err == EOGS && all_done():
 			err = EOG
 		}
 		return
