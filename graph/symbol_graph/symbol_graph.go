@@ -138,15 +138,16 @@ func (sg *SymbolGraph) Contains(str string) bool {
 }
 
 //
-// this function returns the index associated with a given key. if the
-// key doesn't exist, an error is flagged
+// this function returns the index associated with a given key, if the
+// key doesn't exist, it panics. thus clients, are expected to ensure
+// that the key is available before coming here.
 //
-func (sg *SymbolGraph) Index(key string) (idx int32, err error) {
+func (sg *SymbolGraph) Index(key string) (idx int32) {
 	var ok bool
 
 	if idx, ok = sg.sym_table[key]; !ok {
-		err = fmt.Errorf("key: '%s' doesn't exist", key)
-		return
+		err := fmt.Errorf("key: '%s' doesn't exist", key)
+		panic(err)
 	}
 
 	return
@@ -156,7 +157,7 @@ func (sg *SymbolGraph) Index(key string) (idx int32, err error) {
 // this function returns the name associated with a given vertex. if
 // the vertex is invalid, an error is flagged
 func (sg *SymbolGraph) Name(vertex_id int32) (name string, err error) {
-	if vertex_id < 0 || vertex_id > int32(len(sg.keys)) {
+	if vertex_id > int32(len(sg.keys)) {
 		err = fmt.Errorf("vertex: '%d' doesn't exist", vertex_id)
 		return
 	}

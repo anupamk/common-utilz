@@ -92,13 +92,13 @@ func main() {
 		}
 
 		// got something useful, let's see do we know it ?
-		source, err := sg.Index(line_in)
-		if err != nil {
+		if !sg.Contains(line_in) {
 			log.Printf("error: '%s'", err)
 			continue
 		}
 
 		// ok we do, dump named adjacency list
+		source := sg.Index(line_in)
 		fmt.Printf("%s\n", line_in)
 		adj_list := sg_g.Adj(source)
 		for _, v := range adj_list {
