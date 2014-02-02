@@ -37,11 +37,6 @@ import (
 	"github.com/anupamk/common-utilz/stack"
 )
 
-type Walker struct {
-	graph   *graph.Graph
-	visited []bool
-}
-
 type Edge struct {
 	Src int32
 	Dst int32
@@ -77,16 +72,14 @@ type GraphSubsetWalker func() (Edge, error)
 // an 'EOGS' or end-of-graph-subset is returned, when all edges are
 // visited.
 //
-func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
+func BFSGraphSubsetWalker(G graph.GraphOps, source int32) GraphSubsetWalker {
 	var ss_walker GraphSubsetWalker
+
 	queue := queue.New()
-	walker := &Walker{
-		graph:   G,
-		visited: make([]bool, G.V()),
-	}
+	visited := make([]bool, G.V())
 
 	visit_vertex := func(edge Edge) {
-		walker.visited[edge.Dst] = true
+		visited[edge.Dst] = true
 		queue.Push(edge)
 		return
 	}
@@ -98,8 +91,8 @@ func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 			// canonical bfs procedure
 			edge = queue.Pop().(Edge)
 
-			for _, w := range walker.graph.Adj(edge.Dst) {
-				if !walker.visited[w] {
+			for _, w := range G.Adj(edge.Dst) {
+				if !visited[w] {
 					visit_vertex(Edge{edge.Dst, w})
 				}
 			}
@@ -119,13 +112,10 @@ func BFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 // an 'EOGS' or end-of-graph-subset is returned, when all edges are
 // visited.
 //
-func DFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
+func DFSGraphSubsetWalker(G graph.GraphOps, source int32) GraphSubsetWalker {
 	var ss_walker GraphSubsetWalker
 
-	walker := &Walker{
-		graph:   G,
-		visited: make([]bool, G.V()),
-	}
+	visited := make([]bool, G.V())
 
 	// add source
 	stack_1 := stack.New()
@@ -136,11 +126,11 @@ func DFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 	for !stack_1.Empty() {
 		edge := stack_1.Pop().(Edge)
 
-		if !walker.visited[edge.Dst] {
-			walker.visited[edge.Dst] = true
+		if !visited[edge.Dst] {
+			visited[edge.Dst] = true
 			stack_2.Push(edge)
 
-			for _, w := range walker.graph.Adj(edge.Dst) {
+			for _, w := range G.Adj(edge.Dst) {
 				e1 := Edge{edge.Dst, w}
 				stack_1.Push(e1)
 			}
@@ -170,7 +160,7 @@ func DFSGraphSubsetWalker(G *graph.Graph, source int32) GraphSubsetWalker {
 //
 // an 'EOG' or end-of-graph is returned when all edges are visited.
 //
-func BFSGraphWalker(G *graph.Graph) GraphWalker {
+func BFSGraphWalker(G graph.GraphOps) GraphWalker {
 	return create_fullgraph_walker(G, DO_BFS)
 }
 
@@ -181,7 +171,7 @@ func BFSGraphWalker(G *graph.Graph) GraphWalker {
 //
 // an 'EOG' or end-of-graph is returned when all edges are visited.
 //
-func DFSGraphWalker(G *graph.Graph) GraphWalker {
+func DFSGraphWalker(G graph.GraphOps) GraphWalker {
 	return create_fullgraph_walker(G, DO_DFS)
 }
 
@@ -194,7 +184,7 @@ func DFSGraphWalker(G *graph.Graph) GraphWalker {
 // basically we just walk all the subsets of the graph using the
 // appropriate subset walker.
 //
-func create_fullgraph_walker(G *graph.Graph, howto_walk walker_style_t) GraphWalker {
+func create_fullgraph_walker(G graph.GraphOps, howto_walk walker_style_t) GraphWalker {
 	var the_walker GraphWalker
 	var ss_walker GraphSubsetWalker
 
