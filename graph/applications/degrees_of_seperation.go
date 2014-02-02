@@ -147,7 +147,7 @@ func main() {
 
 		// got something useful, let's see do we know it ?
 		if !sg.Contains(dest_name) {
-			log.Printf("error: '%s' doesn't exist\n", err)
+			log.Printf("error: '%s' doesn't exist\n", dest_name)
 			continue
 		}
 
@@ -162,7 +162,7 @@ func main() {
 		// yes there is a path, enumerate it...
 		src_dst_path := all_paths.PathTo(dst_vertex)
 
-		fmt.Fprintf(os.Stdout, "%s\n", source)
+		fmt.Fprintf(os.Stdout, "source: %s, path-length: %d\npath:\n", source, len(src_dst_path)-1)
 		for _, v := range src_dst_path[1:] {
 			vertex_name, _ := sg.Name(v)
 			fmt.Fprintf(os.Stdout, "    %s\n", vertex_name)
