@@ -34,7 +34,7 @@ import (
 
 // ensure vertices are traversed bfs order
 func ExampleCheckBFSTraversalOrder() {
-	fname := "../data/graph-003.data"
+	fname := "../graph/data/graph-003.data"
 	g, _ := graph.LoadGraphFromFile(fname)
 	source_vertex := int32(0)
 
@@ -55,7 +55,7 @@ func ExampleCheckBFSTraversalOrder() {
 
 // ensure vertices are traversed in dfs order
 func ExampleCheckDFSSubsetTraversalOrder() {
-	fname := "../data/graph-003.data"
+	fname := "../graph/data/graph-003.data"
 	g, _ := graph.LoadGraphFromFile(fname)
 	source_vertex := int32(0)
 
@@ -76,7 +76,7 @@ func ExampleCheckDFSSubsetTraversalOrder() {
 // test to see if graph subset traversal visits expected set of
 // vertices for a given source.
 func TestCheckGraphSubsetTraversal(t *testing.T) {
-	fname := "../data/graph-001.data"
+	fname := "../graph/data/graph-001.data"
 	g, _ := graph.LoadGraphFromFile(fname)
 	source_vertex := int32(0)
 	actual_vv := &[]int32{0, 1, 2, 6, 5, 3, 4}
@@ -114,7 +114,7 @@ func TestCheckGraphSubsetTraversal(t *testing.T) {
 
 // test to see if graph traversal does cover all the nodes...
 func TestCheckGraphTraversal(t *testing.T) {
-	fname := "../data/graph-001.data"
+	fname := "../graph/data/graph-001.data"
 	g, _ := graph.LoadGraphFromFile(fname)
 	actual_vv := &[]int32{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
@@ -149,7 +149,7 @@ func TestCheckGraphTraversal(t *testing.T) {
 
 // bfs
 func BenchmarkBFSGraphTraversal(bench *testing.B) {
-	fname := "../data/graph-004.data"
+	fname := "../graph/data/graph-004.data"
 	g, _ := graph.LoadGraphFromFile(fname)
 	bench.ResetTimer()
 
@@ -161,7 +161,7 @@ func BenchmarkBFSGraphTraversal(bench *testing.B) {
 
 // dfs
 func BenchmarkDFSGraphTraversal(bench *testing.B) {
-	fname := "../data/graph-004.data"
+	fname := "../graph/data/graph-004.data"
 	g, _ := graph.LoadGraphFromFile(fname)
 	bench.ResetTimer()
 

@@ -35,7 +35,7 @@ package algorithms
 import (
 	"fmt"
 	"github.com/anupamk/common-utilz/graph"
-	"github.com/anupamk/common-utilz/graph/traversal"
+	"github.com/anupamk/common-utilz/traversal"
 )
 
 type ConnectedComponent struct {

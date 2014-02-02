@@ -33,7 +33,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/anupamk/common-utilz/graph/symbol_graph"
-	"github.com/anupamk/common-utilz/graph/traversal"
+	"github.com/anupamk/common-utilz/traversal"
 	"io"
 	"log"
 	"os"
