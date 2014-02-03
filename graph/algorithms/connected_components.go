@@ -46,7 +46,7 @@ type ConnectedComponent struct {
 //
 // find all connected-components in a graph using breadth-first-search
 //
-func New(G *graph.Graph) (CC *ConnectedComponent) {
+func New(G graph.GraphOps) (CC *ConnectedComponent) {
 	CC = &ConnectedComponent{
 		id:    make([]int32, G.V()),
 		count: 0,

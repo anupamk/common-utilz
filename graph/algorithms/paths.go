@@ -76,7 +76,7 @@ func (path *GraphPath) String() string {
 // this function is called to compute the depth-first-search path for
 // the given graph from a source vertex
 //
-func DFSPath(G *graph.Graph, source int32) (path *GraphPath) {
+func DFSPath(G graph.GraphOps, source int32) (path *GraphPath) {
 	path = &GraphPath{
 		edge_to: make([]edge_to_t, G.V()),
 		source:  source,
@@ -94,7 +94,7 @@ func DFSPath(G *graph.Graph, source int32) (path *GraphPath) {
 // this function is called to compute the breadth-first-search path
 // for the given graph from a source vertex
 //
-func BFSPath(G *graph.Graph, source int32) (path *GraphPath) {
+func BFSPath(G graph.GraphOps, source int32) (path *GraphPath) {
 	path = &GraphPath{
 		edge_to: make([]edge_to_t, G.V()),
 		source:  source,
