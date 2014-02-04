@@ -44,7 +44,7 @@ var graph_data_files = [...]string{
 // matches the expected one
 //
 func Example_001_CreateAndDumpGraph() {
-	tmp, _ := LoadGraphFromFile(graph_data_files[0])
+	tmp, _ := LoadFromFile(graph_data_files[0])
 	tmp_str := tmp.SerializeGraph()
 	fmt.Println(tmp_str)
 
@@ -67,7 +67,7 @@ func Example_001_CreateAndDumpGraph() {
 }
 
 func Example_002_CreateAndDumpGraph() {
-	tmp, _ := LoadGraphFromFile(graph_data_files[1])
+	tmp, _ := LoadFromFile(graph_data_files[1])
 	tmp_str := tmp.SerializeGraph()
 	fmt.Println(tmp_str)
 
@@ -85,13 +85,13 @@ func Example_002_CreateAndDumpGraph() {
 //
 func TestLoadGraph(t *testing.T) {
 	for _, fname := range graph_data_files {
-		g1, _ := LoadGraphFromFile(fname)
+		g1, _ := LoadFromFile(fname)
 		g1_str := g1.SerializeGraph()
 
 		g1_reader := strings.NewReader(g1_str)
 		graph_reader := bufio.NewReader(g1_reader)
 
-		g2, _ := LoadGraphFromReader(graph_reader)
+		g2, _ := LoadFromReader(graph_reader)
 
 		if cmp_graph(g1, g2) == false {
 			t.Log("Error: Unequal Graphs")
