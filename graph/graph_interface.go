@@ -35,5 +35,6 @@ package graph
 //
 type GraphOps interface {
 	V() int32          // number of vertices
+	E() int32          // number of edges
 	Adj(int32) []int32 // adjacency list
 }

@@ -33,6 +33,10 @@ import (
 	"fmt"
 )
 
+/*
+ * unexported stuff
+**/
+
 //
 // dump pretty-printing-string representation of the graph. output
 // format is as following
@@ -42,16 +46,13 @@ import (
 //     <line-003> vertex-2 : adj-list-of(vertex-2)
 //     <line-004> vertex-3 : adj-list-of(vertex-3)
 //
-func (G *Graph) String() string {
-	str := fmt.Sprintf("%d vertices, %d edges\n", G.v, G.e)
+func graph_stringifier(G GraphOps) string {
+	str := fmt.Sprintf("%d vertices, %d edges\n", G.V(), G.E())
 
-	for v, l := range G.adj {
-		str += fmt.Sprintf("%d : ", v)
-
-		for w := l.Front(); w != nil; w = w.Next() {
-			str += fmt.Sprintf("%d ", w.Value.(int32))
+	for v := int32(0); v < G.V(); v++ {
+		for _, w := range G.Adj(v) {
+			str += fmt.Sprintf("%d ", w)
 		}
-
 		str += fmt.Sprintf("\n")
 	}
 
@@ -62,7 +63,7 @@ func (G *Graph) String() string {
 // this function emits the graph structure in a format suitable for
 // subsequent loading from LoadFromXXX(...) invokation
 //
-func (G *Graph) SerializeGraph() string {
+func graph_serializer(G GraphOps) string {
 	str := ""
 
 	// vertex and edge count
@@ -70,15 +71,14 @@ func (G *Graph) SerializeGraph() string {
 	str += fmt.Sprintf("%d\n", G.E())
 
 	// vertex-specific adjacency-list dump
-	for v, adj_list := range G.adj {
-		for node := adj_list.Front(); node != nil; node = node.Next() {
-			w := node.Value.(int32)
-
+	for v := int32(0); v < G.V(); v++ {
+		for _, w := range G.Adj(v) {
 			// for undirected graphs, don't dump both v-w,
 			// and w-v edges
-			if int32(v) > w {
+			if v > w {
 				continue
 			}
+
 			str += fmt.Sprintf("%d %d\n", v, w)
 		}
 	}

@@ -87,6 +87,9 @@ func (G *Graph) AddEdge(v, w int32) {
 	return
 }
 
+func (G *Graph) String() string    { return graph_stringifier(G) }
+func (G *Graph) Serialize() string { return graph_serializer(G) }
+
 //
 // enumerate some fundamental properties of a graph
 //
