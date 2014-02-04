@@ -41,7 +41,7 @@ import (
 
 func ExampleDFSPath() {
 	fname := "../data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 
 	dfs_path := DFSPath(g, source_vertex)
@@ -59,7 +59,7 @@ func ExampleDFSPath() {
 
 func ExampleBFSPath() {
 	fname := "../data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 
 	bfs_path := BFSPath(g, source_vertex)
@@ -77,7 +77,7 @@ func ExampleBFSPath() {
 
 func ExampleBFSPathTo() {
 	fname := "../data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 
 	bfs_path := BFSPath(g, source_vertex)
@@ -98,7 +98,7 @@ func ExampleBFSPathTo() {
 
 func ExampleDFSPathTo() {
 	fname := "../data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 
 	bfs_path := DFSPath(g, source_vertex)
@@ -125,7 +125,7 @@ func ExampleDFSPathTo() {
 //
 func BenchmarkBFSPathTo(bench *testing.B) {
 	fname := "../data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 
 	bfs_path := BFSPath(g, source_vertex)
@@ -143,7 +143,7 @@ func BenchmarkBFSPathTo(bench *testing.B) {
 //
 func BenchmarkDFSPathTo(bench *testing.B) {
 	fname := "../data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 
 	bfs_path := DFSPath(g, source_vertex)

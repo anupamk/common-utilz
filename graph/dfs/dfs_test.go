@@ -45,7 +45,7 @@ var graph_dfs_data = []struct {
 
 func TestDFSSearch(t *testing.T) {
 	for _, graph_data := range graph_dfs_data {
-		g, _ := graph.LoadGraphFromFile(graph_data.fname)
+		g, _ := graph.LoadFromFile(graph_data.fname)
 		dfs_g := New(g, graph_data.source_vertex)
 		cv := dfs_g.ConnectedVertices()
 
@@ -59,7 +59,7 @@ func TestDFSSearch(t *testing.T) {
 func ExampleDepthFirstPath() {
 	graph_fname := "../data/graph-003.data"
 	source_vertex := int32(0)
-	g, _ := graph.LoadGraphFromFile(graph_fname)
+	g, _ := graph.LoadFromFile(graph_fname)
 
 	dfs_g := New(g, source_vertex)
 	for dst_vertex := source_vertex; dst_vertex < g.V(); dst_vertex++ {
@@ -86,7 +86,7 @@ func ExampleDepthFirstPath() {
 //
 func BenchmarkDepthFirstSearch(bench *testing.B) {
 	graph_fname := "../data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(graph_fname)
+	g, _ := graph.LoadFromFile(graph_fname)
 
 	for i := 0; i < bench.N; i++ {
 		for v := int32(0); v < g.V(); v++ {

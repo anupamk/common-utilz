@@ -35,7 +35,7 @@ import (
 // ensure vertices are traversed bfs order
 func ExampleCheckBFSTraversalOrder() {
 	fname := "../graph/data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 
 	bfs_walker := BFSGraphSubsetWalker(g, source_vertex)
@@ -56,7 +56,7 @@ func ExampleCheckBFSTraversalOrder() {
 // ensure vertices are traversed in dfs order
 func ExampleCheckDFSSubsetTraversalOrder() {
 	fname := "../graph/data/graph-003.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 
 	dfs_walker := DFSGraphSubsetWalker(g, source_vertex)
@@ -77,7 +77,7 @@ func ExampleCheckDFSSubsetTraversalOrder() {
 // vertices for a given source.
 func TestCheckGraphSubsetTraversal(t *testing.T) {
 	fname := "../graph/data/graph-001.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	source_vertex := int32(0)
 	actual_vv := &[]int32{0, 1, 2, 6, 5, 3, 4}
 
@@ -115,7 +115,7 @@ func TestCheckGraphSubsetTraversal(t *testing.T) {
 // test to see if graph traversal does cover all the nodes...
 func TestCheckGraphTraversal(t *testing.T) {
 	fname := "../graph/data/graph-001.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	actual_vv := &[]int32{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
 	visited_nodes := func(walker GraphWalker) *[]int32 {
@@ -150,7 +150,7 @@ func TestCheckGraphTraversal(t *testing.T) {
 // bfs
 func BenchmarkBFSGraphTraversal(bench *testing.B) {
 	fname := "../graph/data/graph-004.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	bench.ResetTimer()
 
 	for i, gw := 0, BFSGraphWalker(g); i < bench.N; i++ {
@@ -162,7 +162,7 @@ func BenchmarkBFSGraphTraversal(bench *testing.B) {
 // dfs
 func BenchmarkDFSGraphTraversal(bench *testing.B) {
 	fname := "../graph/data/graph-004.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	bench.ResetTimer()
 
 	for i, gw := 0, DFSGraphWalker(g); i < bench.N; i++ {

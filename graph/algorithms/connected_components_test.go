@@ -37,7 +37,7 @@ import (
 
 func ExampleConnectedComponents() {
 	fname := "../data/graph-001.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 
 	cc := New(g)
 	fmt.Println(cc)
@@ -61,7 +61,7 @@ func ExampleConnectedComponents() {
 
 func TestCCCount(t *testing.T) {
 	fname := "../data/graph-001.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 
 	cc := New(g)
 	cc_count := cc.Count()
@@ -74,7 +74,7 @@ func TestCCCount(t *testing.T) {
 
 func TestCCIsConnected(t *testing.T) {
 	fname := "../data/graph-001.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 
 	cc := New(g)
 
@@ -91,7 +91,7 @@ func TestCCIsConnected(t *testing.T) {
 
 func BenchmarkConnectedComponents(bench *testing.B) {
 	fname := "../data/graph-004.data"
-	g, _ := graph.LoadGraphFromFile(fname)
+	g, _ := graph.LoadFromFile(fname)
 	bench.ResetTimer()
 
 	for i, _ := 0, New(g); i < bench.N; i++ {
