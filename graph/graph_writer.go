@@ -33,6 +33,54 @@ import (
 	"fmt"
 )
 
+//
+// this function emits the graph structure in a format suitable for
+// subsequent loading from LoadFromXXX(...) invokation
+//
+func (G *Graph) Serialize() string {
+	str := ""
+
+	// vertex and edge count
+	str += fmt.Sprintf("%d\n", G.V())
+	str += fmt.Sprintf("%d\n", G.E())
+
+	// vertex-specific adjacency-list dump
+	for v := int32(0); v < G.V(); v++ {
+		for _, w := range G.Adj(v) {
+			// for undirected graphs, don't dump both v-w,
+			// and w-v edges
+			if v > w {
+				continue
+			}
+
+			str += fmt.Sprintf("%d %d\n", v, w)
+		}
+	}
+
+	return str
+}
+
+//
+// this function emits the graph structure in a format suitable for
+// subsequent loading from LoadFromXXX(...) invokation
+//
+func (G *Digraph) Serialize() string {
+	str := ""
+
+	// vertex and edge count
+	str += fmt.Sprintf("%d\n", G.V())
+	str += fmt.Sprintf("%d\n", G.E())
+
+	// vertex-specific adjacency-list dump
+	for v := int32(0); v < G.V(); v++ {
+		for _, w := range G.Adj(v) {
+			str += fmt.Sprintf("%d %d\n", v, w)
+		}
+	}
+
+	return str
+}
+
 /*
  * unexported stuff
 **/
@@ -54,33 +102,6 @@ func graph_stringifier(G GraphOps) string {
 			str += fmt.Sprintf("%d ", w)
 		}
 		str += fmt.Sprintf("\n")
-	}
-
-	return str
-}
-
-//
-// this function emits the graph structure in a format suitable for
-// subsequent loading from LoadFromXXX(...) invokation
-//
-func graph_serializer(G GraphOps) string {
-	str := ""
-
-	// vertex and edge count
-	str += fmt.Sprintf("%d\n", G.V())
-	str += fmt.Sprintf("%d\n", G.E())
-
-	// vertex-specific adjacency-list dump
-	for v := int32(0); v < G.V(); v++ {
-		for _, w := range G.Adj(v) {
-			// for undirected graphs, don't dump both v-w,
-			// and w-v edges
-			if v > w {
-				continue
-			}
-
-			str += fmt.Sprintf("%d %d\n", v, w)
-		}
 	}
 
 	return str

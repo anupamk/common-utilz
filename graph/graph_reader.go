@@ -86,6 +86,55 @@ func LoadFromFile(fname string) (g *Graph, err error) {
 	return
 }
 
+//
+// this function is called to create a graph from it's serialized
+// definition.
+//
+func LoadDigraphFromReader(src *bufio.Reader) (new_graph *Digraph, err error) {
+	var V, E int32
+	var edges [][2]int32
+
+	V, E, edges, err = parse_graph_datafile(src)
+	if err != nil && err != io.EOF {
+		goto all_done
+	}
+
+	// create the graph, and setup the connections
+	new_graph = CreateDigraph(V)
+	for i := int32(0); i < E; i++ {
+		v, w := edges[i][0], edges[i][1]
+
+		// skip edges which are obviouzly bogus
+		if V < v || v < 0 || V < w || w < 0 {
+			fmt.Printf("skipping bogus connection: %d %d\n", v, w)
+			continue
+		}
+		new_graph.AddEdge(w, v)
+	}
+
+all_done:
+	return
+}
+
+//
+// this is a convenience interface over LoadGraph(...) to create a
+// graph from its serialized definition stored in a file identified by
+// 'fname'
+//
+func LoadDigraphFromFile(fname string) (g *Digraph, err error) {
+	var f *os.File
+
+	if f, err = os.Open(fname); err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	file_reader := bufio.NewReader(f)
+	g, err = LoadDigraphFromReader(file_reader)
+
+	return
+}
+
 /*
  * unexported stuff
 **/
