@@ -29,7 +29,11 @@
 package graph
 
 import (
+	"bufio"
 	"container/list"
+	"fmt"
+	"io"
+	"os"
 )
 
 //
@@ -98,23 +102,82 @@ func (G *Digraph) Reverse() (RevG *Digraph) {
 	return
 }
 
+// pretty print a digraph structure.
 func (G *Digraph) String() string { return graph_stringifier(G) }
+
+//
+// this function emits the graph structure in a format suitable for
+// subsequent loading from LoadFromXXX(...) invokation
+//
+func (G *Digraph) Serialize() string {
+	str := ""
+
+	// vertex and edge count
+	str += fmt.Sprintf("%d\n", G.V())
+	str += fmt.Sprintf("%d\n", G.E())
+
+	// vertex-specific adjacency-list dump
+	for v := int32(0); v < G.V(); v++ {
+		for _, w := range G.Adj(v) {
+			str += fmt.Sprintf("%d %d\n", v, w)
+		}
+	}
+
+	return str
+}
+
+//
+// this function is called to create a graph from it's serialized
+// definition.
+//
+func LoadDigraphFromReader(src *bufio.Reader) (new_graph *Digraph, err error) {
+	var V, E int32
+	var edges [][2]int32
+
+	V, E, edges, err = parse_graph_datafile(src)
+	if err != nil && err != io.EOF {
+		goto all_done
+	}
+
+	// create the graph, and setup the connections
+	new_graph = CreateDigraph(V)
+	for i := int32(0); i < E; i++ {
+		v, w := edges[i][0], edges[i][1]
+
+		// skip edges which are obviouzly bogus
+		if V < v || v < 0 || V < w || w < 0 {
+			fmt.Printf("skipping bogus connection: %d %d\n", v, w)
+			continue
+		}
+		new_graph.AddEdge(v, w)
+	}
+
+all_done:
+	return
+}
+
+//
+// this is a convenience interface over LoadGraph(...) to create a
+// graph from its serialized definition stored in a file identified by
+// 'fname'
+//
+func LoadDigraphFromFile(fname string) (g *Digraph, err error) {
+	var f *os.File
+
+	if f, err = os.Open(fname); err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	file_reader := bufio.NewReader(f)
+	g, err = LoadDigraphFromReader(file_reader)
+
+	return
+}
 
 //
 // enumerate some fundamental properties of a graph
 //
-func (G *Digraph) Degree(v int32) (degree int32) { return int32(len(G.Adj(v))) }
-func (G *Digraph) AverageDegree() float64        { return float64(2 * G.V() / G.E()) }
-
-func (G *Digraph) MaxDegree() (max_degree int32) {
-	max_degree = 0
-
-	for v := int32(0); v < G.V(); v++ {
-		d := G.Degree(v)
-		if d > max_degree {
-			max_degree = d
-		}
-	}
-
-	return
-}
+func (G *Digraph) Degree(v int32) int32   { return int32(len(G.Adj(v))) }
+func (G *Digraph) AverageDegree() float64 { return average_degree(G) }
+func (G *Digraph) MaxDegree() int32       { return maximum_degree(G) }
