@@ -45,7 +45,7 @@ type BreadthFirstSearch struct {
 	count   int32
 }
 
-func New(G *graph.Graph, source int32) (bfs *BreadthFirstSearch) {
+func New(G graph.GraphOps, source int32) (bfs *BreadthFirstSearch) {
 	bfs = &BreadthFirstSearch{
 		visited: make([]bool, G.V()),
 		edge_to: make([]int32, G.V()),
@@ -116,7 +116,7 @@ func (bfs *BreadthFirstSearch) Path(dest int32) (path []int32) {
 //
 
 // implements the canonical bfs procedure
-func (bfs *BreadthFirstSearch) run_bfs(G *graph.Graph, source int32) {
+func (bfs *BreadthFirstSearch) run_bfs(G graph.GraphOps, source int32) {
 	visited_queue := queue.New()
 
 	bfs.visited[source] = true
