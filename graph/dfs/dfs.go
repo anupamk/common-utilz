@@ -40,7 +40,7 @@ type DepthFirstSearch struct {
 	count   int32
 }
 
-func New(G *graph.Graph, sv int32) (dfs *DepthFirstSearch) {
+func New(G graph.GraphOps, sv int32) (dfs *DepthFirstSearch) {
 	dfs = &DepthFirstSearch{
 		visited: make([]bool, G.V()),
 		edge_to: make([]int32, G.V()),
@@ -111,7 +111,7 @@ func (dfs *DepthFirstSearch) ConnectedVertices() (vertex_list []int32) {
 //
 
 // implements the canonical recursive dfs procedure
-func (dfs *DepthFirstSearch) run_dfs(G *graph.Graph, source int32) {
+func (dfs *DepthFirstSearch) run_dfs(G graph.GraphOps, source int32) {
 	dfs.visited[source] = true
 	dfs.count += 1
 
