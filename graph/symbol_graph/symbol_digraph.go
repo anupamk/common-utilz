@@ -24,7 +24,7 @@
 // Author: anupam.kapoor@gmail.com (Anupam Kapoor)
 //
 //
-// this package implements the symbol graph where vertex names are
+// this package implements the symbol digraph where vertex names are
 // strings and number of edges/vertices are implicitly defined. this
 // is more typical of real-world (tm) graph applications
 //
@@ -37,19 +37,17 @@ import (
 	"os"
 )
 
-type SymbolGraph struct {
+type SymbolDigraph struct {
 	sym_table map[string]int32 // vertex-name -> vertex-index
 	keys      []string         // vertex-index -> vertex-name
-	sym_graph *graph.Graph     // resultant graph
+	sym_graph *graph.Digraph   // resultant graph
 }
-
-type string_slice_t []string
 
 //
 // this function returns the stringified representation of the
 // symbol-graph
 //
-func (sg *SymbolGraph) String() (retval string) {
+func (sg *SymbolDigraph) String() (retval string) {
 
 	retval += fmt.Sprintf("symbol-table: %v\n", sg.sym_table)
 	retval += fmt.Sprintf("reverse-index: %v\n", sg.keys)
@@ -62,10 +60,10 @@ func (sg *SymbolGraph) String() (retval string) {
 // this function is called to create a symbol-graph from it's
 // serialized definition.
 //
-func LoadFromReader(src *bufio.Reader, sep string) (sg *SymbolGraph, sg_err error) {
+func DigraphFromReader(src *bufio.Reader, sep string) (sg *SymbolDigraph, sg_err error) {
 	symtab, revindex, edge_list := load_symtab_revindex_from_reader(src, sep)
 
-	sg = &SymbolGraph{
+	sg = &SymbolDigraph{
 		sym_table: make(map[string]int32),
 		keys:      make([]string, len(revindex)),
 		sym_graph: nil,
@@ -79,7 +77,7 @@ func LoadFromReader(src *bufio.Reader, sep string) (sg *SymbolGraph, sg_err erro
 	copy(sg.keys, revindex)
 
 	// create the symbol graph
-	sg.sym_graph = graph.New(int32(len(sg.sym_table)))
+	sg.sym_graph = graph.CreateDigraph(int32(len(sg.sym_table)))
 	for _, vlist := range edge_list {
 		sv_id := sg.sym_table[vlist[0]]
 		for i := 1; i < len(vlist); i++ {
@@ -92,11 +90,11 @@ func LoadFromReader(src *bufio.Reader, sep string) (sg *SymbolGraph, sg_err erro
 }
 
 //
-// this is a convenience interface over LoadSymbolGraphFromReader(...)
+// this is a convenience interface over LoadSymbolDigraphFromReader(...)
 // to create a symbol-graph from its serialized definition stored in a
 // file identified by 'fname'
 //
-func LoadFromFile(fname string, sep string) (sg *SymbolGraph, err error) {
+func DigraphFromFile(fname string, sep string) (sg *SymbolDigraph, err error) {
 	var f *os.File
 
 	if f, err = os.Open(fname); err != nil {
@@ -105,7 +103,7 @@ func LoadFromFile(fname string, sep string) (sg *SymbolGraph, err error) {
 	defer f.Close()
 
 	file_reader := bufio.NewReader(f)
-	if sg, err = LoadFromReader(file_reader, sep); err != nil {
+	if sg, err = DigraphFromReader(file_reader, sep); err != nil {
 		return
 	}
 
@@ -116,7 +114,7 @@ func LoadFromFile(fname string, sep string) (sg *SymbolGraph, err error) {
 // this function returns true if the symbol-graph contains 'str' as a
 // vertex
 //
-func (sg *SymbolGraph) Contains(str string) bool {
+func (sg *SymbolDigraph) Contains(str string) bool {
 	_, ok := sg.sym_table[str]
 	return ok
 }
@@ -126,7 +124,7 @@ func (sg *SymbolGraph) Contains(str string) bool {
 // key doesn't exist, it panics. thus clients, are expected to ensure
 // that the key is available before coming here.
 //
-func (sg *SymbolGraph) Index(key string) (idx int32) {
+func (sg *SymbolDigraph) Index(key string) (idx int32) {
 	var ok bool
 
 	if idx, ok = sg.sym_table[key]; !ok {
@@ -140,7 +138,7 @@ func (sg *SymbolGraph) Index(key string) (idx int32) {
 //
 // this function returns the name associated with a given vertex. if
 // the vertex is invalid, an error is flagged
-func (sg *SymbolGraph) Name(vertex_id int32) (name string, err error) {
+func (sg *SymbolDigraph) Name(vertex_id int32) (name string, err error) {
 	if vertex_id > int32(len(sg.keys)) {
 		err = fmt.Errorf("vertex: '%d' doesn't exist", vertex_id)
 		return
@@ -153,4 +151,4 @@ func (sg *SymbolGraph) Name(vertex_id int32) (name string, err error) {
 //
 // this function returns a pointer to the underlying graph in the
 // symbol graph.
-func (sg *SymbolGraph) G() (g *graph.Graph) { return sg.sym_graph }
+func (sg *SymbolDigraph) G() (g *graph.Digraph) { return sg.sym_graph }
