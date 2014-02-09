@@ -23,7 +23,7 @@ func ExampleTopoOrder() {
 		return
 	}
 
-	for _, v := range topo_order.Order() {
+	for _, v := range topo_order {
 		vname, _ := sym_dg.Name(v)
 		fmt.Printf("%s\n", vname)
 	}

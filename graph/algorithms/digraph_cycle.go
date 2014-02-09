@@ -38,9 +38,11 @@ import (
 )
 
 //
-// this function return a DirectedCycle on a given digraph
+// this function returns true if a digraph has a cycle and false
+// otherwise. for a cyclic digraph, first found cycle is also
+// returned.
 //
-func IsDigraphAcyclic(G graph.GraphOps) (yesno bool, cycle []int32) {
+func IsDigraphAcyclic(G graph.GraphOps) (cyclic bool, cycle []int32) {
 	var do_dfs func(graph.GraphOps, int32)
 
 	visited := make([]bool, G.V())
@@ -83,13 +85,13 @@ func IsDigraphAcyclic(G graph.GraphOps) (yesno bool, cycle []int32) {
 
 	// acyclic digraph
 	if cycle_stack.Len() == 0 {
-		yesno = true
+		cyclic = false
 		cycle = nil
 		return
 	}
 
 	// cyclic digraph, return the cycle
-	yesno = false
+	cyclic = true
 	cycle = make([]int32, cycle_stack.Len())
 	for i := 0; !cycle_stack.Empty(); i++ {
 		cycle[i] = cycle_stack.Pop().(int32)

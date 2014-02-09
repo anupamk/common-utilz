@@ -45,7 +45,7 @@ func ExampleDigraphCycle() {
 		panic(fatal_err)
 	}
 
-	if no, cycle := IsDigraphAcyclic(g); !no {
+	if cyclic, cycle := IsDigraphAcyclic(g); cyclic {
 		fmt.Println(cycle)
 	}
 
