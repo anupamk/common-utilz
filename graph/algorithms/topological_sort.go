@@ -1,7 +1,6 @@
 package algorithms
 
 import (
-	"error"
 	"fmt"
 	"github.com/anupamk/common-utilz/graph"
 	"github.com/anupamk/common-utilz/traversal"
@@ -17,7 +16,7 @@ type Topological struct {
 //
 func ComputeTopologicalOrder(G graph.GraphOps) (TO *Topological, err error) {
 	if dg := DigraphCyle(G); !dg.IsAcyclic() {
-		err = fmt.Errorf("error: no ordering possible. digraph has cycle : %s\n", dg.Cycle())
+		err = fmt.Errorf("error: given no ordering possible. digraph has cycle: %v\n", dg.Cycle())
 		return
 	}
 
