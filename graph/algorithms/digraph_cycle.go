@@ -33,23 +33,14 @@
 package algorithms
 
 import (
-	"fmt"
 	"github.com/anupamk/common-utilz/graph"
 	"github.com/anupamk/common-utilz/stack"
 )
 
-type DirectedCycle struct {
-	cycle []int32
-}
-
-func (dc *DirectedCycle) String() string {
-	return fmt.Sprintf("%v\n", dc.cycle)
-}
-
 //
 // this function return a DirectedCycle on a given digraph
 //
-func DigraphCyle(G graph.GraphOps) (dc *DirectedCycle) {
+func IsDigraphAcyclic(G graph.GraphOps) (yesno bool, cycle []int32) {
 	var do_dfs func(graph.GraphOps, int32)
 
 	visited := make([]bool, G.V())
@@ -90,17 +81,19 @@ func DigraphCyle(G graph.GraphOps) (dc *DirectedCycle) {
 		}
 	}
 
-	// setup the result
-	dc = &DirectedCycle{
-		cycle: make([]int32, cycle_stack.Len()),
+	// acyclic digraph
+	if cycle_stack.Len() == 0 {
+		yesno = true
+		cycle = nil
+		return
 	}
 
+	// cyclic digraph, return the cycle
+	yesno = false
+	cycle = make([]int32, cycle_stack.Len())
 	for i := 0; !cycle_stack.Empty(); i++ {
-		dc.cycle[i] = cycle_stack.Pop().(int32)
+		cycle[i] = cycle_stack.Pop().(int32)
 	}
 
 	return
 }
-
-func (dc *DirectedCycle) IsAcyclic() bool { return len(dc.cycle) == 0 }
-func (dc *DirectedCycle) Cycle() []int32  { return dc.cycle }

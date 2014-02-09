@@ -45,8 +45,9 @@ func ExampleDigraphCycle() {
 		panic(fatal_err)
 	}
 
-	dc := DigraphCyle(g)
-	fmt.Println(dc)
+	if no, cycle := IsDigraphAcyclic(g); !no {
+		fmt.Println(cycle)
+	}
 
 	// Output:
 	// [3 5 4 3]

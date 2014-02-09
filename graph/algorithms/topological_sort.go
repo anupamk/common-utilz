@@ -15,8 +15,8 @@ type Topological struct {
 // digraph. returns an error if no such ordering is possible
 //
 func ComputeTopologicalOrder(G graph.GraphOps) (TO *Topological, err error) {
-	if dg := DigraphCyle(G); !dg.IsAcyclic() {
-		err = fmt.Errorf("error: given no ordering possible. digraph has cycle: %v\n", dg.Cycle())
+	if yes, cycle := IsDigraphAcyclic(G); yes {
+		err = fmt.Errorf("error: digraph has a cycle: %v. no ordering possible\n", cycle)
 		return
 	}
 
