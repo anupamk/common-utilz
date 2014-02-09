@@ -90,12 +90,7 @@ func DigraphCyle(G graph.GraphOps) (dc *DirectedCycle) {
 		}
 	}
 
-	// nothing more to do
-	if cycle_stack.Len() == 0 {
-		return
-	}
-
-	// ok found a cycle, store it for future reference
+	// setup the result
 	dc = &DirectedCycle{
 		cycle: make([]int32, cycle_stack.Len()),
 	}
