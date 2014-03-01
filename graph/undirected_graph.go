@@ -30,11 +30,13 @@ package graph
 
 import (
 	"bufio"
-	"container/list"
 	"fmt"
 	"io"
 	"os"
 )
+
+// a list of vertices making up the graph
+type vertex_list_t []int32
 
 //
 // adjacency list representation of a Graph, which contains 'V'
@@ -44,7 +46,7 @@ import (
 type Graph struct {
 	v   int32
 	e   int32
-	adj []list.List
+	adj []vertex_list_t
 }
 
 //
@@ -55,27 +57,13 @@ func New(V int32) *Graph {
 	return &Graph{
 		v:   V,
 		e:   0,
-		adj: make([]list.List, V),
+		adj: make([]vertex_list_t, V),
 	}
 }
 
-func (G *Graph) V() int32 { return G.v }
-func (G *Graph) E() int32 { return G.e }
-
-//
-// return the list of vertices adjacent to a given vertex 'v'.
-//
-func (G *Graph) Adj(v int32) []int32 {
-	adj_list := G.adj[v]
-	vertex_list := make([]int32, adj_list.Len())
-
-	for i, node := 0, adj_list.Front(); node != nil; i, node = i+1, node.Next() {
-		v := node.Value.(int32)
-		vertex_list[i] = v
-	}
-
-	return vertex_list
-}
+func (G *Graph) V() int32            { return G.v }
+func (G *Graph) E() int32            { return G.e }
+func (G *Graph) Adj(v int32) []int32 { return G.adj[v] }
 
 //
 // in a graph G, add an edge between vertices 'v' and 'w'. for
@@ -83,8 +71,11 @@ func (G *Graph) Adj(v int32) []int32 {
 // well
 //
 func (G *Graph) AddEdge(v, w int32) {
-	G.adj[v].PushFront(w)
-	G.adj[w].PushFront(v)
+	V := &G.adj[v]
+	W := &G.adj[w]
+
+	*V = append(*V, w)
+	*W = append(*W, v)
 
 	G.e += 1
 
@@ -145,6 +136,8 @@ func LoadFromReader(src *bufio.Reader) (new_graph *Graph, err error) {
 		}
 		new_graph.AddEdge(w, v)
 	}
+
+	ReverseAdjList(new_graph)
 
 all_done:
 	return

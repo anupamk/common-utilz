@@ -70,7 +70,7 @@ func TestNumericAdj(t *testing.T) {
 	// compare the symbol-graph's adjacency list
 	for g, v := sg.G(), int32(0); v < g.V(); v++ {
 		v_adj := g.Adj(v)
-		ok := slice_utils.CmpInt32Slice(&sg_numeric_adj[v], &v_adj)
+		ok := slice_utils.RelaxedCmpInt32Slice(&sg_numeric_adj[v], &v_adj)
 
 		if !ok {
 			t.Logf("vertex: %d, got-adj: %v, want-adj: %v\n", v, sg_numeric_adj[v], g.Adj(v))

@@ -80,11 +80,14 @@ func DigraphFromReader(src *bufio.Reader, sep string) (sg *SymbolDigraph, sg_err
 	sg.sym_graph = graph.CreateDigraph(int32(len(sg.sym_table)))
 	for _, vlist := range edge_list {
 		sv_id := sg.sym_table[vlist[0]]
-		for i := 1; i < len(vlist); i++ {
-			dv_id := sg.sym_table[vlist[i]]
+
+		for _, vi := range vlist[1:] {
+			dv_id := sg.sym_table[vi]
 			sg.sym_graph.AddEdge(sv_id, dv_id)
 		}
 	}
+
+	graph.ReverseAdjList(sg.sym_graph)
 
 	return
 }

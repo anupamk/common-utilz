@@ -16,7 +16,8 @@ import (
 func load_symtab_revindex_from_reader(src *bufio.Reader, sep string) (symtab map[string]int32, revindex []string, edge_list []string_slice_t) {
 	symtab = make(map[string]int32)
 
-	// populate the symbol table
+	// populate the symbol table, ignoring all comment lines
+	// i.e. lines begining with '#'
 	for vlist, err := line_parser.StringsFromReader(src, '#', sep); err != io.EOF; {
 		edge_list = append(edge_list, vlist)
 

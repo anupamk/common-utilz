@@ -88,6 +88,8 @@ func LoadFromReader(src *bufio.Reader, sep string) (sg *SymbolGraph, sg_err erro
 		}
 	}
 
+	graph.ReverseAdjList(sg.sym_graph)
+
 	return
 }
 

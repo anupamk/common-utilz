@@ -170,3 +170,19 @@ func cmp_adj_list(x *[]int32, y *[]int32) bool {
 
 	return slice_utils.CmpIntSlice(&xint, &yint)
 }
+
+//
+// reverse adj-list for a given graph. required since we swithced to a
+// slice based represenstation of adjacency list, where destination
+// vertices are appended rather than pre-pended
+//
+func ReverseAdjList(G GraphOps) {
+	for v := int32(0); v < G.V(); v++ {
+		adj_v := G.Adj(v)
+		for m, n := int32(0), int32(len(adj_v)-1); m < n; m, n = m+1, n-1 {
+			adj_v[m], adj_v[n] = adj_v[n], adj_v[m]
+		}
+	}
+
+	return
+}

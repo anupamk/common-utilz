@@ -30,7 +30,6 @@ package graph
 
 import (
 	"bufio"
-	"container/list"
 	"fmt"
 	"io"
 	"os"
@@ -44,7 +43,7 @@ import (
 type Digraph struct {
 	v   int32
 	e   int32
-	adj []list.List
+	adj []vertex_list_t
 }
 
 //
@@ -55,35 +54,22 @@ func CreateDigraph(V int32) *Digraph {
 	return &Digraph{
 		v:   V,
 		e:   0,
-		adj: make([]list.List, V),
+		adj: make([]vertex_list_t, V),
 	}
 }
 
-func (G *Digraph) V() int32 { return G.v }
-func (G *Digraph) E() int32 { return G.e }
-
-//
-// return the list of vertices adjacent to a given vertex 'v'.
-//
-func (G *Digraph) Adj(v int32) []int32 {
-	adj_list := G.adj[v]
-	vertex_list := make([]int32, adj_list.Len())
-
-	for i, node := 0, adj_list.Front(); node != nil; i, node = i+1, node.Next() {
-		v := node.Value.(int32)
-		vertex_list[i] = v
-	}
-
-	return vertex_list
-}
+func (G *Digraph) V() int32            { return G.v }
+func (G *Digraph) E() int32            { return G.e }
+func (G *Digraph) Adj(v int32) []int32 { return G.adj[v] }
 
 //
 // in a digraph G, add an edge between vertices 'v' and 'w'.
 //
 func (G *Digraph) AddEdge(v, w int32) {
-	G.adj[v].PushFront(w)
-	G.e += 1
+	V := &G.adj[v]
+	*V = append(*V, w)
 
+	G.e += 1
 	return
 }
 
@@ -151,6 +137,8 @@ func LoadDigraphFromReader(src *bufio.Reader) (new_graph *Digraph, err error) {
 		}
 		new_graph.AddEdge(v, w)
 	}
+
+	ReverseAdjList(new_graph)
 
 all_done:
 	return
